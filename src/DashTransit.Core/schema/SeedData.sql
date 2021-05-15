@@ -3,10 +3,16 @@ GO
 
 DELETE FROM Messages
 INSERT INTO Messages
-    (Id, Content, Type)
+    (Id, CorrelationId, Content, Type, Timestamp)
 VALUES
-    ('2d6ee703-c0f5-493b-83c4-663cf8cecca7', CONCAT('{"job":"', NEWID(), '"'), 'Message1'),
-    ('fab6de5a-5349-4278-b184-63dc26aacc78', CONCAT('{"job":"', NEWID(), '"'), 'Message2')
+    ('2d6ee703-c0f5-493b-83c4-663cf8cecca7', NEWID(), CONCAT('{"job":"', NEWID(), '"}'), 'Message1', GETDATE()),
+    ('fab6de5a-5349-4278-b184-63dc26aacc78', NEWID(), CONCAT('{"job":"', NEWID(), '"}'), 'Message2', GETDATE())
+
+DELETE FROM Faults
+INSERT INTO Faults 
+    (Id, MessageId, Exception, StackTrace, Type, Source)
+VALUES
+    (NEWID(), 'fab6de5a-5349-4278-b184-63dc26aacc78', 'Bad thing', 'Line 1', 'System.InvalidOperationException', 'Place')
 
 DELETE FROM Endpoints
 INSERT INTO Endpoints
@@ -44,7 +50,3 @@ VALUES
         FROM Messages
         WHERE Id = '2d6ee703-c0f5-493b-83c4-663cf8cecca7'))
 
-SELECT message.id, message.type, message.content, producer.Uri Producer, consumer.Uri Consumer
-FROM Messages message, Endpoints producer, sent, recieved, Endpoints consumer
-WHERE MATCH(producer-(sent)->message<-(recieved)-consumer)
-AND message.type='Message1';
