@@ -23,10 +23,13 @@ namespace DashTransit.Core
                 return;
             }
 
+            EnsureDatabase.For.SqlDatabase(connectionString);
+
             var result = DeployChanges
                 .To.SqlDatabase(connectionString)
                 .LogToConsole()
                 .WithScriptsEmbeddedInAssembly(typeof(Hook).Assembly)
+                .JournalToSqlTable("dbo", "__Migrations")
                 .Build()
                 .PerformUpgrade();
 

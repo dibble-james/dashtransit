@@ -6,24 +6,11 @@ using System;
 using System.Linq;
 using DashTransit.App;
 using DashTransit.Core;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
 
-static void RunHost(string[] args)
+var task = args.FirstOrDefault() switch
 {
-    Host.CreateDefaultBuilder(args)
-        .ConfigureWebHostDefaults(webBuilder =>
-        {
-            webBuilder.UseStartup<Startup>();
-        })
-        .Build()
-        .Run();
-}
-
-var task = args switch
-{
-    string[] a when (a.FirstOrDefault()?.Equals("migrate")) ?? false => Migrator.Migrate(Console.Out, Console.Error),
-    _ => RunHost,
+    "migrate" => Migrator.Migrate(Console.Out, Console.Error),
+    _ => WebApp.Run,
 };
 
 task(args);
