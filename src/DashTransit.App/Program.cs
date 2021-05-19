@@ -5,7 +5,7 @@
 using System;
 using System.Linq;
 using DashTransit.App;
-using DashTransit.Core;
+using DashTransit.Core.Infrastructure;
 
 var task = args.FirstOrDefault() switch
 {

@@ -2,7 +2,7 @@
 // Copyright (c) James Dibble. All rights reserved.
 // </copyright>
 
-namespace DashTransit.Core
+namespace DashTransit.Core.Infrastructure
 {
     using System;
     using System.IO;
