@@ -30,9 +30,13 @@ namespace DashTransit.Core.Domain
         private readonly string content;
         private readonly string type;
 
-        public Message(MessageId id)
+        public Message(MessageId id, CorrelationId correlationId, DateTimeOffset timestamp, string content, string type)
             : base(id)
         {
+            this.correlationId = correlationId;
+            this.timestamp = timestamp;
+            this.content = content;
+            this.type = type;
         }
 
         public CorrelationId CorrelationId => this.correlationId;

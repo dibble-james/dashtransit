@@ -19,9 +19,10 @@ namespace DashTransit.Core.Domain
     {
         private readonly Uri uri;
 
-        public Endpoint(EndpointId id)
+        public Endpoint(EndpointId id, Uri uri)
             : base(id)
         {
+            this.uri = uri;
         }
 
         public Uri Uri => this.uri;
