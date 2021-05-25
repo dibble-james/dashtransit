@@ -16,8 +16,11 @@
 
   <ItemGroup>
     <PackageReference Include="dbup-sqlserver" Version="4.5.0" />
-    <PackageReference Include="MassTransit" Version="7.1.8" />
+    <PackageReference Include="MassTransit" Version="7.1.*" />
+    <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.1.*" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.6" />
+    <PackageReference Include="Scrutor" Version="3.3.0" />
   </ItemGroup>
 </Project>

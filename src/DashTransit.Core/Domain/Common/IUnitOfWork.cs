@@ -11,7 +11,5 @@ namespace DashTransit.Core.Domain.Common
         Task Save<T, TId>(T entity)
             where T : Aggregate<TId>
             where TId : class;
-
-        Task Commit();
     }
 }

@@ -6,16 +6,12 @@ namespace DashTransit.Core.Infrastructure
 {
     using System.Linq;
     using System.Threading.Tasks;
-    using DashTransit.Core.Application.Common;
     using DashTransit.Core.Domain;
     using DashTransit.Core.Domain.Common;
     using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Storage;
 
     public class DashTransitContext : DbContext, IUnitOfWork
     {
-        private IDbContextTransaction? transaction;
-
         public DbSet<Endpoint> Endpoints => this.Set<Endpoint>();
 
         public DbSet<Message> Messages => this.Set<Message>();
@@ -26,8 +22,6 @@ namespace DashTransit.Core.Infrastructure
             where T : Aggregate<TId>
             where TId : class
         {
-            this.transaction ??= this.Database.BeginTransaction();
-
             var dbSet = this.Set<T>();
 
             if (!dbSet.Local.Any(a => a == entity))
@@ -36,38 +30,6 @@ namespace DashTransit.Core.Infrastructure
             }
 
             await this.SaveChangesAsync();
-        }
-
-        public async Task Commit()
-        {
-            if (this.transaction is null)
-            {
-                return;
-            }
-
-            try
-            {
-                await this.transaction.CommitAsync();
-            }
-            catch
-            {
-                await this.transaction.RollbackAsync();
-                throw;
-            }
-            finally
-            {
-                this.transaction = null;
-            };
-        }
-
-        public async override ValueTask DisposeAsync()
-        {
-            if (this.transaction is object)
-            {
-                await this.transaction.RollbackAsync();
-            }
-
-            await base.DisposeAsync();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
