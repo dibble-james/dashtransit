@@ -1,52 +1,112 @@
 USE dashtransit;
 GO
 
-DELETE FROM Messages
-INSERT INTO Messages
-    (Id, CorrelationId, Content, Type, Timestamp)
-VALUES
-    ('2d6ee703-c0f5-493b-83c4-663cf8cecca7', NEWID(), CONCAT('{"job":"', NEWID(), '"}'), 'Message1', GETDATE()),
-    ('fab6de5a-5349-4278-b184-63dc26aacc78', NEWID(), CONCAT('{"job":"', NEWID(), '"}'), 'Message2', GETDATE())
+DROP TABLE IF EXISTS #CoversationIds
+CREATE TABLE #CoversationIds (c UNIQUEIDENTIFIER)
+GO
 
-DELETE FROM Faults
-INSERT INTO Faults 
-    (Id, MessageId, Exception, StackTrace, Type, Source)
-VALUES
-    (NEWID(), 'fab6de5a-5349-4278-b184-63dc26aacc78', 'Bad thing', 'Line 1', 'System.InvalidOperationException', 'Place')
+INSERT INTO #CoversationIds (c) 
+SELECT NEWID() 
+GO 100
+
+DELETE FROM Messages
+GO
+INSERT INTO Messages (MessageId, Content, Timestamp, ConversationId)
+SELECT NEWID(), CONCAT('{"job":"', NEWID(), '"}'), GETDATE(), (SELECT TOP 1 c FROM #CoversationIds ORDER BY NEWID())
+GO 500
 
 DELETE FROM Endpoints
+GO
 INSERT INTO Endpoints
-    (Id, Uri)
+    (Uri)
 VALUES
-    (1, 'web'),
-    (2, 'api'),
-    (3, 'worker')
+    ('web'),
+    ('api'),
+    ('worker')
 
-INSERT INTO Sent
-VALUES
-    ((SELECT $node_id
-        FROM Endpoints
-        WHERE ID = 1),
-        (SELECT $node_id
-        FROM Messages
-        WHERE Id = 'fab6de5a-5349-4278-b184-63dc26aacc78')),
-    ((SELECT $node_id
-        FROM Endpoints
-        WHERE ID = 2),(SELECT $node_id
-        FROM Messages
-        WHERE Id = '2d6ee703-c0f5-493b-83c4-663cf8cecca7'))
+DELETE FROM MessageTypes
+GO
+INSERT INTO MessageTypes
+    (Name)
+VALUES  
+    ('Message1'),
+    ('Message2'),
+    ('Message3'),
+    ('Message4'),
+    ('Message5')
+GO
 
+;WITH Vals AS
+(
+    SELECT  m.$node_id as m, t.$node_id as t,
+        ROW_NUMBER() OVER( PARTITION BY m.$node_id ORDER BY NEWID()) RowNumber
+    FROM Messages m, MessageTypes t
+)
+INSERT INTO OfType
+SELECT  m, t
+FROM    Vals
+WHERE   RowNumber <= 1
+GO
 
-INSERT INTO Recieved
-VALUES
-    ((SELECT $node_id
-        FROM Endpoints
-        WHERE ID = 3),(SELECT $node_id
-        FROM Messages
-        WHERE Id = 'fab6de5a-5349-4278-b184-63dc26aacc78')),
-    ((SELECT $node_id
-        FROM Endpoints
-        WHERE ID = 3),(SELECT $node_id
-        FROM Messages
-        WHERE Id = '2d6ee703-c0f5-493b-83c4-663cf8cecca7'))
+;WITH Vals AS
+(
+    SELECT  m.$node_id as m, t.$node_id as t,
+        ROW_NUMBER() OVER( PARTITION BY m.$node_id ORDER BY NEWID()) RowNumber
+    FROM Messages m, Endpoints t
+)
+INSERT INTO Source
+SELECT m,t
+FROM    Vals
+WHERE   RowNumber <= 1
+GO
+
+;WITH Vals AS
+(
+    SELECT  m.$node_id as m, t.$node_id as t,
+        ROW_NUMBER() OVER( PARTITION BY m.$node_id ORDER BY NEWID()) RowNumber
+    FROM Messages m, Endpoints t
+)
+INSERT INTO Destination
+SELECT m,t
+FROM    Vals
+WHERE   RowNumber <= 1
+GO
+
+;WITH m AS
+(
+    select
+         ROW_NUMBER() OVER( PARTITION BY ConversationId ORDER BY NEWID()) RowNumber,
+         ConversationId,
+         MessageId
+    from Messages
+),
+last_message AS
+(
+    SELECT MAX(RowNumber) as RowNumber, ConversationId
+    FROM m
+    GROUP BY ConversationId
+),
+c AS
+(
+    SELECT m.RowNumber, MessageId, m.ConversationId, CAST(NULL AS uniqueidentifier) as Initiator, CAST(NULL AS bigint) as InitiatorIndex
+    FROM m
+    INNER JOIN last_message l ON l.ConversationId = m.ConversationId AND l.RowNumber = m.RowNumber
+    UNION ALL
+    SELECT m.RowNumber, m.MessageId, m.ConversationId, c.MessageId as Initiator, c.RowNumber as InitiatorIndex
+    FROM m
+    INNER JOIN c ON m.RowNumber = c.RowNumber - 1 AND m.ConversationId = c.ConversationId
+    WHERE m.RowNumber >= 1
+),
+i AS
+(
+    select m.$node_id AS MessageNode, i.$node_id AS InitiatorNode, c.ConversationId from c
+    inner join Messages m on c.MessageId = m.MessageId
+    inner join Messages i on c.Initiator = i.MessageId
+)
+INSERT INTO Initiator
+SELECT MessageNode,InitiatorNode,ConversationId
+FROM i
+GO
+
+DROP TABLE IF EXISTS #CoversationIds
 
