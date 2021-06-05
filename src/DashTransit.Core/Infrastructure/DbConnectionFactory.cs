@@ -18,7 +18,10 @@ namespace DashTransit.Core.Infrastructure
         {
             var connection = new SqlConnection(connectionString);
             await connection.OpenAsync();
-            return new QueryFactory(connection, Compiler);
+            var db = new QueryFactory(connection, Compiler);
+            db.Logger = compiled => Console.WriteLine(compiled.ToString());
+
+            return db;
         };
     }
 }

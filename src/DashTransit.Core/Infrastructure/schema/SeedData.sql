@@ -1,20 +1,6 @@
 USE dashtransit;
 GO
 
-DROP TABLE IF EXISTS #CoversationIds
-CREATE TABLE #CoversationIds (c UNIQUEIDENTIFIER)
-GO
-
-INSERT INTO #CoversationIds (c) 
-SELECT NEWID() 
-GO 100
-
-DELETE FROM Messages
-GO
-INSERT INTO Messages (MessageId, Content, Timestamp, ConversationId)
-SELECT NEWID(), CONCAT('{"job":"', NEWID(), '"}'), GETDATE(), (SELECT TOP 1 c FROM #CoversationIds ORDER BY NEWID())
-GO 500
-
 DELETE FROM Endpoints
 GO
 INSERT INTO Endpoints
@@ -36,41 +22,26 @@ VALUES
     ('Message5')
 GO
 
-;WITH Vals AS
-(
-    SELECT  m.$node_id as m, t.$node_id as t,
-        ROW_NUMBER() OVER( PARTITION BY m.$node_id ORDER BY NEWID()) RowNumber
-    FROM Messages m, MessageTypes t
-)
-INSERT INTO OfType
-SELECT  m, t
-FROM    Vals
-WHERE   RowNumber <= 1
+DROP TABLE IF EXISTS #CoversationIds
+CREATE TABLE #CoversationIds (c UNIQUEIDENTIFIER)
 GO
 
-;WITH Vals AS
-(
-    SELECT  m.$node_id as m, t.$node_id as t,
-        ROW_NUMBER() OVER( PARTITION BY m.$node_id ORDER BY NEWID()) RowNumber
-    FROM Messages m, Endpoints t
-)
-INSERT INTO Source
-SELECT m,t
-FROM    Vals
-WHERE   RowNumber <= 1
-GO
+INSERT INTO #CoversationIds (c) 
+SELECT NEWID() 
+GO 100
 
-;WITH Vals AS
-(
-    SELECT  m.$node_id as m, t.$node_id as t,
-        ROW_NUMBER() OVER( PARTITION BY m.$node_id ORDER BY NEWID()) RowNumber
-    FROM Messages m, Endpoints t
-)
-INSERT INTO Destination
-SELECT m,t
-FROM    Vals
-WHERE   RowNumber <= 1
+DELETE FROM Messages
 GO
+INSERT INTO Messages (MessageId, Content, Timestamp, ConversationId, MessageTypeId, SourceEndpointId, DestinationEndpointId)
+SELECT
+    NEWID(),
+    CONCAT('{"job":"', NEWID(), '"}'),
+    GETDATE(),
+    (SELECT TOP 1 c FROM #CoversationIds ORDER BY NEWID()),
+    (SELECT TOP 1 Idx FROM MessageTypes ORDER BY NEWID()),
+    (SELECT TOP 1 Idx FROM Endpoints ORDER BY NEWID()),
+    (SELECT TOP 1 Idx FROM Endpoints ORDER BY NEWID())
+GO 500
 
 ;WITH m AS
 (

@@ -6,6 +6,7 @@ namespace DashTransit.Core
 {
     using System;
     using DashTransit.Core.Application;
+    using DashTransit.Core.Domain.Common;
     using DashTransit.Core.Infrastructure;
     using GreenPipes;
     using MassTransit;
@@ -18,6 +19,7 @@ namespace DashTransit.Core
         public static void AddDashTransit(this IServiceCollection services, string storageConnectionString)
         {
             services.AddMediatR(typeof(Hook).Assembly);
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped(DbConnectionFactory.Open(storageConnectionString));
             services.Scan(scanner => scanner.FromAssemblyOf<Hook>()
                 .AddClasses(c => c.InNamespaces("DashTransit.Core.Infrastructure", "DashTransit.Core.Domain.Services"))

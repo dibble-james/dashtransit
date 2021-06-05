@@ -1,0 +1,21 @@
+@page "/message"
+
+@if (Response is null)
+{
+    <MudSkeleton Animation="Animation.Wave" />
+}
+else
+{
+    <MudTable Items="@Response.Messages" FixedHeader="true" Height="calc(100vh - 64px)">
+        <HeaderContent>
+            <MudTh>Timestamp</MudTh>
+            <MudTh>Id</MudTh>
+            <MudTh>Message Type</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Timestamp">@context.Timestamp</MudTd>
+            <MudTd DataLabel="Id">@context.Id.Id</MudTd>
+            <MudTd DataLabel="Message Type">@context.MessageType</MudTd>
+        </RowTemplate>
+    </MudTable>
+}
