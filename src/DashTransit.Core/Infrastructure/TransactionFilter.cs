@@ -12,10 +12,6 @@ namespace DashTransit.Core.Infrastructure
     public class TransactionFilter<T> : IFilter<ConsumeContext<T>>
         where T : class
     {
-        private readonly DashTransitContext context;
-
-        public TransactionFilter(DashTransitContext context) => this.context = context;
-
         public void Probe(ProbeContext context)
         {
             context.CreateScope(nameof(TransactionFilter<T>));
@@ -23,16 +19,12 @@ namespace DashTransit.Core.Infrastructure
 
         public async Task Send(ConsumeContext<T> context, IPipe<ConsumeContext<T>> next)
         {
-            using var transaction = await this.context.Database.BeginTransactionAsync(context.CancellationToken);
-
             try
             {
                 await next.Send(context);
-                await transaction.CommitAsync(context.CancellationToken);
             }
             catch
             {
-                await transaction.RollbackAsync(context.CancellationToken);
                 throw;
             }
         }
