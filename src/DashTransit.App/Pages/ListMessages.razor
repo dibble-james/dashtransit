@@ -11,11 +11,13 @@ else
             <MudTh>Timestamp</MudTh>
             <MudTh>Id</MudTh>
             <MudTh>Message Type</MudTh>
+            <MudTh></MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Timestamp">@context.Timestamp</MudTd>
             <MudTd DataLabel="Id">@context.Id.Id</MudTd>
             <MudTd DataLabel="Message Type">@context.MessageType</MudTd>
+            <MudTd><MudButton Link=@($"/message/{context.Id.Id}")>View</MudButton></MudTd>
         </RowTemplate>
     </MudTable>
 }

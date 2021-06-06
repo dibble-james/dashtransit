@@ -1,0 +1,14 @@
+@page "/message/{messageId:guid}"
+
+@if (!this.HasLoaded)
+{
+    <MudSkeleton Animation="Animation.Wave" />
+}
+else if (this.Response is null)
+{
+    <H5>Message Not Found</H5>
+}
+else
+{
+    <H5>@this.Response.Id.Id</H5>
+}
