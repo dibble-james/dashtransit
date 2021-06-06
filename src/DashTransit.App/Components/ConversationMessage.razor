@@ -1,0 +1,10 @@
+<MudCard>
+    <MudCardContent>
+        <MudText>@Node.Message.MessageId.Id</MudText>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter]
+    public ConversationMessageModel Node { get; init; }
+}

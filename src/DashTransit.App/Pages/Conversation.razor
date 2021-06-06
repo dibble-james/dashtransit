@@ -1,4 +1,7 @@
 @page "/message/conversation/{conversationId:guid}"
+@using Blazor.Diagrams.Core;
+@using Blazor.Diagrams.Core.Models;
+@using Blazor.Diagrams.Components;
 
 @if (!this.HasLoaded)
 {
@@ -10,5 +13,9 @@ else if (this.Response is null)
 }
 else
 {
-    <H5>@this.Response.ConversationId.Id</H5>
+    <div style="width: 100vw; height: calc(100vh - 64px)">
+        <CascadingValue Value="Diagram">
+            <DiagramCanvas></DiagramCanvas>
+        </CascadingValue>
+    </div>
 }

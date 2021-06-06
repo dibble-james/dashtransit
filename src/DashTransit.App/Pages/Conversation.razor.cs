@@ -5,7 +5,11 @@
 namespace DashTransit.App.Pages
 {
     using System;
+    using System.Linq;
     using System.Threading.Tasks;
+    using Blazor.Diagrams.Core;
+    using Blazor.Diagrams.Core.Models;
+    using DashTransit.App.Components;
     using DashTransit.Core.Application;
     using DashTransit.Core.Domain;
     using MediatR;
@@ -23,10 +27,22 @@ namespace DashTransit.App.Pages
 
         private Core.ConversationDetailsResponse Response { get; set; }
 
+        private Diagram Diagram { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             this.Response = await this.Mediator.Send(new ConversationDetails(new CorrelationId(this.ConversationId)));
             this.HasLoaded = true;
+
+            var options = new DiagramOptions();
+
+            this.Diagram = new Diagram(options);
+            this.Diagram.RegisterModelComponent<ConversationMessageModel, ConversationMessage>();
+
+            var nodes = this.Response.Messages.Select(m => new ConversationMessageModel(m));
+            this.Diagram.Nodes.Add(nodes);
+            this.Diagram.Refresh();
+
             this.StateHasChanged();
         }
     }
