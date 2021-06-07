@@ -10,5 +10,27 @@ else if (this.Response is null)
 }
 else
 {
-    <H5>@this.Response.Id.Id</H5>
+    <MudGrid Class="mt-1">
+        <MudItem xs="12">
+            <H5>@this.Response.Id.Id</H5>
+        </MudItem>
+        <MudItem md="6">
+            <DL>
+                <dt>Timestamp</dt>
+                <dd>@this.Response.Timestamp</dd>
+                <dt>Message Type</dt>
+                <dd>@this.Response.MessageType</dd>
+                <dt>Source</dt>
+                <dd>@this.Response.Source</dd>
+                <dt>Destination</dt>
+                <dd>@this.Response.Destination</dd>
+            </DL>
+            <MudButton Class="ma-1" Link=@($"/message/conversation/{this.Response.ConversationId.Id}")>View Conversation</MudButton>
+        </MudItem>
+        <MudItem md="6">
+            <code>
+                @this.Response.Content
+            </code>
+        </MudItem>
+    </MudGrid>
 }

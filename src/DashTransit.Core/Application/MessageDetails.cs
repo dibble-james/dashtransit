@@ -17,12 +17,13 @@ namespace DashTransit.Core.Application
     public record MessageDetails(MessageId Id) : IRequest<OneOf<MessageDetailsResponse, None>>;
 
     public record MessageDetailsResponse(
-        MessageId Id)
-    {
-        public record Endpoint(string Name);
-
-        public record MessageType(string Name);
-    }
+        MessageId Id,
+        CorrelationId ConversationId,
+        DateTimeOffset Timestamp,
+        string MessageType,
+        string Content,
+        string Source,
+        string Destination);
 
     public class MessageDetailsHandler : IRequestHandler<MessageDetails, OneOf<MessageDetailsResponse, None>>
     {
@@ -46,7 +47,13 @@ namespace DashTransit.Core.Application
             }
 
             return new MessageDetailsResponse(
-                new MessageId(query.MessageId));
+                new MessageId(query.MessageId),
+                new CorrelationId(query.ConversationId),
+                query.Timestamp,
+                query.Name,
+                query.Content,
+                null,
+                null);
         });
     }
 }
