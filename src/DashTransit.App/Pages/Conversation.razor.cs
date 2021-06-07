@@ -14,6 +14,11 @@ namespace DashTransit.App.Pages
     using DashTransit.Core.Domain;
     using MediatR;
     using Microsoft.AspNetCore.Components;
+    using Microsoft.Msagl.Core.Geometry;
+    using Microsoft.Msagl.Core.Geometry.Curves;
+    using Microsoft.Msagl.Core.Layout;
+    using Microsoft.Msagl.Miscellaneous;
+    using Microsoft.Msagl.Prototype.Ranking;
     using Core = DashTransit.Core.Application;
 
     public partial class Conversation
@@ -34,16 +39,34 @@ namespace DashTransit.App.Pages
             this.Response = await this.Mediator.Send(new ConversationDetails(new CorrelationId(this.ConversationId)));
             this.HasLoaded = true;
 
+            var graphModel = new GeometryGraph();
+            foreach (var node in this.Response.Messages)
+            {
+                graphModel.Nodes.Add(new Node(CurveFactory.CreateRectangle(330, 80, new Point()), node.MessageId));
+            }
+
+            foreach (var node in this.Response.Messages.Where(n => n.Parent is not null))
+            {
+                graphModel.Edges.Add(
+                    new Edge(
+                        graphModel.FindNodeByUserData(node.MessageId),
+                        graphModel.FindNodeByUserData(node.Parent.MessageId)));
+            }
+
+            LayoutHelpers.CalculateLayout(graphModel, new RankingLayoutSettings(), null);
+
             var options = new DiagramOptions();
 
             this.Diagram = new Diagram(options);
             this.Diagram.RegisterModelComponent<ConversationMessageModel, ConversationMessage>();
 
-            var nodes = this.Response.Messages.Select(m => new ConversationMessageModel(m)).ToList();
-            var edges = this.Response.Messages.Select(
+            var nodes = this.Response.Messages
+                .Join(graphModel.Nodes, m => m.MessageId, n => n.UserData, (m,n) => new { m, n })
+                .Select(x => new ConversationMessageModel(x.m, new Blazor.Diagrams.Core.Geometry.Point(x.n.Center.X, x.n.Center.Y))).ToList();
+            var edges = this.Response.Messages.Where(n => n.Parent is not null).Select(
                 m => new LinkModel(
                     nodes.First(n => n.Message.MessageId == m.MessageId),
-                    m.Parent is null ? null : nodes.FirstOrDefault(n => n.Message.MessageId == m.Parent.MessageId))).ToList();
+                    nodes.FirstOrDefault(n => n.Message.MessageId == m.Parent.MessageId))).ToList();
             this.Diagram.Nodes.Add(nodes);
             this.Diagram.Links.Add(edges);
 
