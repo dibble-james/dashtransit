@@ -39,9 +39,13 @@ namespace DashTransit.App.Pages
             this.Diagram = new Diagram(options);
             this.Diagram.RegisterModelComponent<ConversationMessageModel, ConversationMessage>();
 
-            var nodes = this.Response.Messages.Select(m => new ConversationMessageModel(m));
+            var nodes = this.Response.Messages.Select(m => new ConversationMessageModel(m)).ToList();
+            var edges = this.Response.Messages.Select(
+                m => new LinkModel(
+                    nodes.First(n => n.Message.MessageId == m.MessageId),
+                    m.Parent is null ? null : nodes.FirstOrDefault(n => n.Message.MessageId == m.Parent.MessageId))).ToList();
             this.Diagram.Nodes.Add(nodes);
-            this.Diagram.Refresh();
+            this.Diagram.Links.Add(edges);
 
             this.StateHasChanged();
         }

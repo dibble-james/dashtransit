@@ -14,6 +14,10 @@ namespace DashTransit.App.Components
             : base(poistion)
         {
             this.Message = message;
+            this.AddPort(PortAlignment.Top);
+            this.AddPort(PortAlignment.Right);
+            this.AddPort(PortAlignment.Bottom);
+            this.AddPort(PortAlignment.Left);
         }
 
         public ConversationDetailsResponse.Message Message { get; }
