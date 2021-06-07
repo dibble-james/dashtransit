@@ -1,0 +1,13 @@
+@using Newtonsoft.Json
+
+@code {
+    [Parameter]
+    public string Content { get; set; }
+
+    private string FormattedContent()
+            => JsonConvert.SerializeObject(JsonConvert.DeserializeObject(this.Content), Formatting.Indented);
+}
+
+<MudPaper Elevation="1" Class="pa-5 mud-width-full">
+    <code>@FormattedContent()</code>
+</MudPaper>

@@ -1,0 +1,12 @@
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public string Class { get; set; }
+
+    [Parameter]
+    public string Link { get; set; }
+}
+
+<MudButton Variant="Variant.Text" Class=@Class Link=@Link>@ChildContent</MudButton>

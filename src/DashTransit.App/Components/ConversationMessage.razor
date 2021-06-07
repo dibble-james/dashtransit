@@ -1,9 +1,9 @@
 <MudCard>
     <MudCardContent>
-        <MudText>@Node.Message.MessageType</MudText>
-        <MudText Typo="Typo.body2">@Node.Message.Timestamp</MudText>
+        <Default>@Node.Message.MessageType</Default>
+        <SubText>@Node.Message.Timestamp</SubText>
         <MudCardActions>
-            <MudButton Variant="Variant.Text" Color="Color.Primary" Link=@($"/message/{Node.Message.MessageId.Id}")>Details</MudButton>
+            <PrimaryButton Link=@($"/message/{Node.Message.MessageId.Id}")>Details</PrimaryButton>
         </MudCardActions>
     </MudCardContent>
 </MudCard>

@@ -17,7 +17,7 @@ else
             <MudTd DataLabel="Timestamp">@context.Timestamp</MudTd>
             <MudTd DataLabel="Id">@context.Id.Id</MudTd>
             <MudTd DataLabel="Message Type">@context.MessageType</MudTd>
-            <MudTd><MudButton Link=@($"/message/{context.Id.Id}")>View</MudButton></MudTd>
+            <MudTd><PrimaryButton Link=@($"/message/{context.Id.Id}")>View</PrimaryButton></MudTd>
         </RowTemplate>
     </MudTable>
 }
