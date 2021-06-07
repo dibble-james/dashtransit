@@ -42,7 +42,7 @@ namespace DashTransit.App.Pages
             var graphModel = new GeometryGraph();
             foreach (var node in this.Response.Messages)
             {
-                graphModel.Nodes.Add(new Node(CurveFactory.CreateRectangle(330, 80, new Point()), node.MessageId));
+                graphModel.Nodes.Add(new Node(CurveFactory.CreateRectangle(400, 200, new Point()), node.MessageId));
             }
 
             foreach (var node in this.Response.Messages.Where(n => n.Parent is not null))
@@ -66,7 +66,10 @@ namespace DashTransit.App.Pages
             var edges = this.Response.Messages.Where(n => n.Parent is not null).Select(
                 m => new LinkModel(
                     nodes.First(n => n.Message.MessageId == m.MessageId),
-                    nodes.FirstOrDefault(n => n.Message.MessageId == m.Parent.MessageId))).ToList();
+                    nodes.FirstOrDefault(n => n.Message.MessageId == m.Parent.MessageId))
+                {
+                    TargetMarker = LinkMarker.Arrow,
+                }).ToList();
             this.Diagram.Nodes.Add(nodes);
             this.Diagram.Links.Add(edges);
 
