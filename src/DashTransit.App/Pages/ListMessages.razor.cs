@@ -4,21 +4,38 @@
 
 namespace DashTransit.App.Pages
 {
+    using System;
     using System.Threading.Tasks;
     using MediatR;
     using Microsoft.AspNetCore.Components;
+    using MudBlazor;
     using Core = DashTransit.Core.Application;
 
     public partial class ListMessages
     {
         [Inject]private IMediator Mediator { get; init; }
 
-        private Core.ListMessageResponse Response { get; set; }
+        private bool Loading { get; set; }
 
-        protected override async Task OnInitializedAsync()
+        private async Task<T> WithLoading<T>(Func<Task<T>> loader)
         {
-            this.Response = await this.Mediator.Send(new Core.ListMessages(1));
-            this.StateHasChanged();
+            this.Loading = true;
+
+            try
+            {
+                return await loader();
+            }
+            finally
+            {
+                this.Loading = false;
+            }
         }
+
+        private Task<TableData<Core.ListMessageResponse.Message>> LoadPage(TableState state) => this.WithLoading(async () =>
+        {
+            var response = await this.Mediator.Send(new Core.ListMessages(state.Page, state.PageSize));
+
+            return new TableData<Core.ListMessageResponse.Message> { TotalItems = response.Total, Items = response.Messages };
+        });
     }
 }

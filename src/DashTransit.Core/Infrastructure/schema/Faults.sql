@@ -1,22 +1,3 @@
-USE master
-GO
-ALTER DATABASE [dashtransit] SET SINGLE_USER WITH ROLLBACK IMMEDIATE
-DROP DATABASE dashtransit
-GO
-CREATE DATABASE dashtransit
-GO
-USE dashtransit
-GO
--- BEGIN TRY
---     DROP FULLTEXT CATALOG MessageCatalog;
--- END TRY
--- BEGIN CATCH
---     PRINT 'Full text catalog not there'
--- END CATCH
-
--- CREATE FULLTEXT CATALOG MessageCatalog;
--- GO
-
 CREATE TABLE Endpoints
 (
     Idx INTEGER PRIMARY KEY IDENTITY(1,1),
@@ -47,9 +28,6 @@ CREATE TABLE Messages
     CONSTRAINT FK_DestinationEndpointId FOREIGN KEY (DestinationEndpointId) REFERENCES Endpoints(Idx)
 ) AS NODE;
 CREATE INDEX Idx_Timestamp ON Messages(Timestamp)
-
---CREATE FULLTEXT INDEX ON Messages(Content, Type)
---KEY INDEX IDX_Id ON MessageCatalog
 
 CREATE TABLE ExceptionTypes
 (
