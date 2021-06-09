@@ -1,0 +1,36 @@
+name: dashtransit
+network: dashtransit
+extensions:
+- name: seq
+  logPath: ./.volumes/seq
+services:
+- name: rabbitmq
+  image: rabbitmq:3-management-alpine
+  bindings:
+  - name: amqp
+    port: 5672
+    protocol: amqp
+    connectionString: amqp://guest:guest@localhost:${port}
+  - name: management
+    port: 15672
+    containerPort: 15672
+    protocol: http
+  volumes:
+  - source: ./.volumes/rabbit
+    target: /var/lib/rabbitmq
+  env:
+  - RABBITMQ_NODENAME=rabbit@rabbitmq
+- name: sqlserver
+  image: mcr.microsoft.com/mssql/server:2019-latest
+  bindings:
+  - port: 1433
+    protocol: tcp
+    connectionString: "Server=${host},${port};Database=dashtransit;User Id=sa;Password=${env:SA_PASSWORD};"
+  volumes:
+  - source: ./.volumes/sql/data
+    target: /var/opt/mssql/data
+  - source: ./.volumes/sql/log
+    target: /var/opt/mssql/log
+  env:
+  - ACCEPT_EULA=Y
+  - SA_PASSWORD=P@ssword123

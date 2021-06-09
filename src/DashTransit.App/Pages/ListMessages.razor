@@ -1,0 +1,32 @@
+@page "/message"
+
+<MudTable ServerData="LoadPage" FixedHeader="true" Height="calc(100vh - 64px)" CustomHeader="true" CustomFooter="true">
+    <HeaderContent>
+        <MudTHeadRow>
+            <MudTh>Timestamp</MudTh>
+            <MudTh>Id</MudTh>
+            <MudTh>Message Type</MudTh>
+            <MudTh></MudTh>
+        </MudTHeadRow>
+        @if (Loading)
+        {
+            <MudTHeadRow>
+                <MudTh><MudSkeleton Animation="Animation.Wave" Height="3rem" /></MudTh>
+                <MudTh><MudSkeleton Animation="Animation.Wave" Height="3rem" /></MudTh>
+                <MudTh><MudSkeleton Animation="Animation.Wave" Height="3rem" /></MudTh>
+                <MudTh><MudSkeleton Animation="Animation.Wave" Height="3rem" /></MudTh>
+            </MudTHeadRow>
+        }
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Timestamp">@context.Timestamp</MudTd>
+        <MudTd DataLabel="Id">@context.Id.Id</MudTd>
+        <MudTd DataLabel="Message Type">@context.MessageType</MudTd>
+        <MudTd><PrimaryButton Link=@($"/message/{context.Id.Id}")>View</PrimaryButton></MudTd>
+    </RowTemplate>
+    <FooterContent>
+        <MudTFootRow>
+            <MudTablePager />
+        </MudTFootRow>
+    </FooterContent>
+</MudTable>

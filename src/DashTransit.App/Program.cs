@@ -2,23 +2,15 @@
 // Copyright (c) James Dibble. All rights reserved.
 // </copyright>
 
-namespace DashTransit.App
+using System;
+using System.Linq;
+using DashTransit.App;
+using DashTransit.Core.Infrastructure;
+
+var task = args.FirstOrDefault() switch
 {
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.Extensions.Hosting;
+    "migrate" => Migrator.Migrate(Console.Out, Console.Error),
+    _ => WebApp.Run,
+};
 
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
-
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-    }
-}
+task(args);

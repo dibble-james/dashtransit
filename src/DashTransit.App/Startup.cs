@@ -4,7 +4,10 @@
 
 namespace DashTransit.App
 {
+    using DashTransit.Core;
+    using MassTransit;
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
@@ -22,9 +25,24 @@ namespace DashTransit.App
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHealthChecks();
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddMudServices();
+            services.AddDashTransit(this.Configuration.GetValue<string>("storage-provider"));
+
+            services.AddMassTransit(mt =>
+            {
+                mt.AddDashTransit();
+
+                mt.UsingRabbitMq((context, bus) =>
+                {
+                    bus.Host(this.Configuration.GetValue<string>("transport-provider"));
+                    bus.UseDashTransit(context);
+                    bus.UseHealthCheck(context);
+                });
+            });
+            services.AddMassTransitHostedService();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -40,6 +58,8 @@ namespace DashTransit.App
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHealthChecks("/ready", new HealthCheckOptions { Predicate = check => check.Tags.Contains("ready") });
+                endpoints.MapHealthChecks("/healthz", new HealthCheckOptions { Predicate = _ => false });
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });

@@ -9,7 +9,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MudBlazor" Version="5.0.8" />
+    <PackageReference Include="AutomaticGraphLayout" Version="1.1.11" />
+    <PackageReference Include="MassTransit.AspNetCore" Version="7.1.*" />
+    <PackageReference Include="MassTransit.RabbitMq" Version="7.1.*" />
+    <PackageReference Include="MudBlazor" Version="5.0.11" />
+    <PackageReference Include="OneOf" Version="3.0.186" />
+    <PackageReference Include="Z.Blazor.Diagrams" Version="2.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Pages\Message - Copy - Copy.razor.cs">
+      <DependentUpon>Message - Copy.razor.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Pages\Message - Copy.razor.cs">
+      <DependentUpon>Message.razor.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,14 @@
+<MudCard>
+    <MudCardContent>
+        <Default>@Node.Message.MessageType</Default>
+        <SubText>@Node.Message.Timestamp</SubText>
+        <MudCardActions>
+            <PrimaryButton Link=@($"/message/{Node.Message.MessageId.Id}")>Details</PrimaryButton>
+        </MudCardActions>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter]
+    public ConversationMessageModel Node { get; init; }
+}

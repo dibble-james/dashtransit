@@ -2,6 +2,25 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Infrastructure\schema\Faults.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Infrastructure\schema\Faults.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="dbup-sqlserver" Version="4.5.0" />
+    <PackageReference Include="MassTransit" Version="7.1.*" />
+    <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.1.*" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
+    <PackageReference Include="OneOf" Version="3.0.186" />
+    <PackageReference Include="Scrutor" Version="3.3.0" />
+    <PackageReference Include="SqlKata.Execution" Version="3.2.3" />
+  </ItemGroup>
 </Project>
