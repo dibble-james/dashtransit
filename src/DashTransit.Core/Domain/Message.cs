@@ -5,46 +5,41 @@
 namespace DashTransit.Core.Domain
 {
     using System;
-    using DashTransit.Core.Domain.Common;
+    using System.Collections.Generic;
+    using ValueOf;
 
-    public record MessageId : GuidIdentity<MessageId>
+    public class MessageId : ValueOf<Guid, MessageId> {}
+
+    public class CorrelationId : ValueOf<Guid, CorrelationId> {}
+
+    public class MessageType : ValueOf<string, MessageType> {}
+
+    public class Message
     {
-        public MessageId(Guid Id)
-            : base(Id)
-        {
-        }
-    }
+        private readonly List<Fault> faults;
 
-    public record CorrelationId : GuidIdentity<CorrelationId>
-    {
-        public CorrelationId(Guid Id)
-            : base(Id)
+        public Message(MessageId id, CorrelationId correlationId, DateTime timestamp, MessageType type, string content)
         {
-        }
-    }
-
-    public class Message : Aggregate<MessageId>
-    {
-        private readonly CorrelationId correlationId;
-        private readonly DateTimeOffset timestamp;
-        private readonly string content;
-        private readonly string type;
-
-        public Message(MessageId id, CorrelationId correlationId, DateTimeOffset timestamp, string content, string type)
-            : base(id)
-        {
-            this.correlationId = correlationId;
-            this.timestamp = timestamp;
-            this.content = content;
-            this.type = type;
+            this.Id = id;
+            this.CorrelationId = correlationId;
+            this.Timestamp = timestamp;
+            this.Content = content;
+            this.Type = type;
+            this.faults = new List<Fault>();
         }
 
-        public CorrelationId CorrelationId => this.correlationId;
+        public MessageId Id { get; }
 
-        public DateTimeOffset Timestamp => this.timestamp;
+        public CorrelationId CorrelationId { get; }
 
-        public string Content => this.content;
+        public DateTime Timestamp { get; }
 
-        public string Type => this.type;
+        public MessageType Type { get; }
+
+        public string Content { get; }
+
+        public IReadOnlyCollection<Fault> Faults => this.faults;
+
+        public void RegisterFault(Fault fault) => this.faults.Add(fault);
     }
 }

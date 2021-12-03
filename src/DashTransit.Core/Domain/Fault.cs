@@ -4,30 +4,33 @@
 
 namespace DashTransit.Core.Domain
 {
-    using System;
-
-    public class Fault : Message
+    public class Fault
     {
-        private readonly string exception;
-        private readonly string stackTrace;
-        private readonly string exceptionType;
-        private readonly string source;
-
-        public Fault(MessageId id, CorrelationId correlationId, DateTimeOffset timestamp, string content, string type, string exception, string stackTrace, string exceptionType, string source)
-            : base(id, correlationId, timestamp, content, type)
+        protected Fault(Endpoint raisedBy, string exception, string stackTrace, string exceptionType, string source)
         {
-            this.exception = exception;
-            this.stackTrace = stackTrace;
-            this.exceptionType = exceptionType;
-            this.source = source;
+            this.RaisedBy = raisedBy;
+            this.Exception = exception;
+            this.StackTrace = stackTrace;
+            this.ExceptionType = exceptionType;
+            this.Source = source;
         }
 
-        public string Exception => this.exception;
+        public Fault(Message message, Endpoint raisedBy, string exception, string stackTrace, string exceptionType, string source)
+            : this(raisedBy, exception, stackTrace, exceptionType, source)
+        {
+            this.Message = message;
+        }
 
-        public string StackTrace => this.stackTrace;
+        public Message? Message { get; }
 
-        public string ExceptionType => this.exceptionType;
+        public Endpoint RaisedBy { get; }
 
-        public string Source => this.source;
+        public string Exception { get; }
+
+        public string StackTrace { get; }
+
+        public string ExceptionType { get; }
+
+        public string Source { get; }
     }
 }
