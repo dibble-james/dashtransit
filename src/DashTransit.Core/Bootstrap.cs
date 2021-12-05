@@ -8,12 +8,14 @@ namespace DashTransit.Core
     using GreenPipes;
     using MassTransit;
     using MassTransit.ExtensionsDependencyInjectionIntegration;
+    using MediatR;
     using Microsoft.Extensions.DependencyInjection;
 
     public static class Bootstrap
     {
-        public static void AddDashTransit(this IServiceCollection services, string storageConnectionString)
+        public static void AddDashTransit(this IServiceCollection services)
         {
+            services.AddMediatR(typeof(Hook));
         }
 
         public static void AddDashTransit(this IServiceCollectionBusConfigurator bus)

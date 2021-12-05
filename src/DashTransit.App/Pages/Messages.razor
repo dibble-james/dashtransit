@@ -1,0 +1,14 @@
+@page "/message"
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent 
+
+<FluentDataGrid ColumnDefinitions=Columns>
+
+</FluentDataGrid>
+
+@code {
+    private readonly List<ColumnDefinition<LatestMessages>> Columns = new List<ColumnDefinition<LatestMessages>>
+    {
+        new ColumnDefinition<LatestMessages>("Sent", x => x.Sent),
+        new ColumnDefinition<LatestMessages>("Type", x => x.MessageType),
+    };
+}
