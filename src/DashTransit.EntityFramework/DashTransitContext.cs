@@ -16,6 +16,7 @@ public class DashTransitContext : DbContext
         modelBuilder.HasDefaultSchema("mt");
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(DashTransitContext).Assembly);
+        modelBuilder.ApplyConfiguration(new AuditMapping("__audit"));
 
         base.OnModelCreating(modelBuilder);
     }
