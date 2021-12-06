@@ -1,5 +1,7 @@
 @page "/message"
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent 
+@inject IDispatcher Dispatcher
+@inject IState<MessagesState> State
 
 <FluentDataGrid ColumnDefinitions=Columns>
 

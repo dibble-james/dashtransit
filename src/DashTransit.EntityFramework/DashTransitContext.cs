@@ -1,8 +1,10 @@
-using MassTransit.EntityFrameworkCoreIntegration.Audit;
+namespace DashTransit.EntityFramework;
+
+using System.Linq;
+using DashTransit.Core.Domain;
+using DashTransit.EntityFramework.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-
-namespace DashTransit.EntityFramework;
 
 public class DashTransitContext : DbContext
 {
@@ -11,12 +13,13 @@ public class DashTransitContext : DbContext
     {
     }
 
+    public IQueryable<IRawAuditData> Audit => this.Set<RawAudit>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("mt");
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(DashTransitContext).Assembly);
-        modelBuilder.ApplyConfiguration(new AuditMapping("__audit"));
 
         base.OnModelCreating(modelBuilder);
     }

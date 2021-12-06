@@ -3,30 +3,13 @@ namespace DashTransit.App.Pages;
 using DashTransit.Core.Application.Queries;
 using Fluxor;
 using MediatR;
-using Microsoft.AspNetCore.Components;
 
 public partial class Messages
 {
-    [Inject]
-    public IState<MessagesState> State { get; set; }
-
-    [Inject]
-    public IDispatcher Dispatcher { get; set; }
-
-    [Inject]
-    public IMediator Mediator { get; set; }
-
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-        Dispatcher.Dispatch(new FetchData());
-    }
-
-    [EffectMethod(typeof(FetchData))]
-    public async Task HandleFetchDataAction(IDispatcher dispatcher)
-    {
-        var messages = await Mediator.Send(new LatestMessagesQuery());
-        dispatcher.Dispatch(new Fetched(messages));
+        this.Dispatcher.Dispatch(new FetchData());
     }
 
     [ReducerMethod(typeof(FetchData))]
@@ -40,6 +23,23 @@ public partial class Messages
     {
         public bool Loading { get; init; } = true;
         public IEnumerable<LatestMessages> Messages { get; init; } = Enumerable.Empty<LatestMessages>();
+    }
+
+    public class Handlers
+    {
+        private readonly IMediator mediator;
+
+        public Handlers(IMediator mediator)
+        {
+            this.mediator = mediator;
+        }
+
+        [EffectMethod(typeof(FetchData))]
+        public async Task HandleFetchDataAction(IDispatcher dispatcher)
+        {
+            var messages = await this.mediator.Send(new LatestMessagesQuery());
+            dispatcher.Dispatch(new Fetched(messages));
+        }
     }
 
     public record FetchData();
