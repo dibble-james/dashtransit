@@ -1,16 +1,36 @@
 @page "/message"
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent 
+@using DashTransit.Core.Application.Queries
 @inject IDispatcher Dispatcher
 @inject IState<MessagesState> State
 
-<FluentDataGrid ColumnDefinitions=Columns>
+<FluentToolbar>
+    <FluentButton @onclick=@(() => Dispatcher.Dispatch(new FetchData()))>Refresh</FluentButton>
+</FluentToolbar>
 
-</FluentDataGrid>
+@if (State.Value.Loading)
+{
+    <FluentProgress />
+}
+else
+{
+    <FluentDataGrid ColumnDefinitions=Columns RowsData=@State.Value.Messages GridTemplateColumns="1fr 1fr 1fr">
+        <RowItemTemplate>
+            <FluentDataGridRow TItem=DashTransit.Core.Application.Queries.LatestMessages>
+                <FluentDataGridCell GridColumn=1>@context.Sent</FluentDataGridCell>
+                <FluentDataGridCell GridColumn=2>@context.MessageType</FluentDataGridCell>
+                <FluentDataGridCell GridColumn=3><FluentButton>Details</FluentButton></FluentDataGridCell>
+            </FluentDataGridRow>
+        </RowItemTemplate>
+    </FluentDataGrid>
+}
+
 
 @code {
     private readonly List<ColumnDefinition<LatestMessages>> Columns = new List<ColumnDefinition<LatestMessages>>
     {
         new ColumnDefinition<LatestMessages>("Sent", x => x.Sent),
         new ColumnDefinition<LatestMessages>("Type", x => x.MessageType),
+        new ColumnDefinition<LatestMessages>("", x => x),
     };
 }

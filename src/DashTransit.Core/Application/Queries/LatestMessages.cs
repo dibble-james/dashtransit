@@ -8,7 +8,7 @@ using Ardalis.Specification;
 using DashTransit.Core.Domain;
 using MediatR;
 
-public record LatestMessages(MessageType MessageType, DateTime Sent);
+public record LatestMessages(MessageId Id, MessageType MessageType, DateTime Sent);
 
 public class LatestMessagesQuery : IRequest<IEnumerable<LatestMessages>>
 {
@@ -28,13 +28,13 @@ public class LatestMessagesQuery : IRequest<IEnumerable<LatestMessages>>
         {
             public Query()
             {
-                Query.Where(x => x.ContextType == "Send" || x.ContextType == "Publish" && x.SentTime.HasValue);
+                Query.Where(x => x.MessageId.HasValue && (x.ContextType == "Send" || x.ContextType == "Publish" && x.SentTime.HasValue));
 
                 Query.OrderByDescending(x => x.SentTime);
 
                 Query.Take(50);
 
-                Query.Select(raw => new LatestMessages(MessageType.From(raw.MessageType), raw.SentTime!.Value));
+                Query.Select(raw => new LatestMessages(MessageId.From(raw.MessageId.GetValueOrDefault()), MessageType.From(raw.MessageType), raw.SentTime!.Value));
             }
         }
     }

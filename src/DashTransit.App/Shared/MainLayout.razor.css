@@ -16,7 +16,7 @@ div.main-container {
 header {
     grid-area: siteheader;
     flex-grow: 1;
-    background: var(--fill-color);
+    background: var(--neutral-layer-floating);
     padding: 0.5rem 1rem;
 }
 
@@ -33,7 +33,7 @@ main {
 
 main aside {
     grid-area: navigation;
-    background-color: var(--fill-color);
+    background-color: var(--neutral-layer-floating);
     color: var(--neutral-foreground-rest);
     padding-left: calc(var(--design-unit) * 3px);
 }
