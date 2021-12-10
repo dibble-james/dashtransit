@@ -1,0 +1,30 @@
+@page "/message/{AuditId:int}"
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@inject IDispatcher Dispatcher
+@inject IState<MessageState> State
+
+@code {
+    [Parameter]
+    public int AuditId { get; set; }
+}
+
+@if (State.Value.Loading)
+{
+    <FluentProgress />
+}
+else if (State.Value is null)
+{
+    <p>Message not found</p>
+}
+else
+{
+    <div class="container">
+        <dl>
+            <DL T="Message Id" D=@(State.Value.Message!.MessageId) />
+            <DL T="Message Type" D=@(State.Value.Message!.MessageType) />
+            <DL T="Correlation Id" D=@(State.Value.Message!.CorrelationId) />
+            <DL T="Conversation Id" D=@(State.Value.Message!.ConversationId) />
+        </dl>
+        <code>@State.Value.Message.Message</code>
+    </div>
+}

@@ -19,7 +19,7 @@ else
             <FluentDataGridRow TItem=DashTransit.Core.Application.Queries.LatestMessages>
                 <FluentDataGridCell GridColumn=1>@context.Sent</FluentDataGridCell>
                 <FluentDataGridCell GridColumn=2>@context.MessageType</FluentDataGridCell>
-                <FluentDataGridCell GridColumn=3><FluentButton>Details</FluentButton></FluentDataGridCell>
+                <FluentDataGridCell GridColumn=3><FluentAnchor href=@($"message/{context.Id}")>Details</FluentAnchor></FluentDataGridCell>
             </FluentDataGridRow>
         </RowItemTemplate>
     </FluentDataGrid>
