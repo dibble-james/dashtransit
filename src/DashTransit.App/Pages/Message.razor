@@ -24,6 +24,7 @@ else
             <DL T="Message Type" D=@(State.Value.Message!.MessageType) />
             <DL T="Correlation Id" D=@(State.Value.Message!.CorrelationId) />
             <DL T="Conversation Id" D=@(State.Value.Message!.ConversationId) />
+            <DL T="Sender" D=@(State.Value.Message!.SourceAddress) />
         </dl>
         <code>@State.Value.Message.Message</code>
     </div>
