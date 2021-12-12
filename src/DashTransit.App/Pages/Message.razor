@@ -8,24 +8,34 @@
     public int AuditId { get; set; }
 }
 
-@if (State.Value.Loading)
-{
-    <FluentProgress />
-}
-else if (State.Value is null)
-{
-    <p>Message not found</p>
-}
-else
-{
-    <div class="container">
-        <dl>
-            <DL T="Message Id" D=@(State.Value.Message!.MessageId) />
-            <DL T="Message Type" D=@(State.Value.Message!.MessageType) />
-            <DL T="Correlation Id" D=@(State.Value.Message!.CorrelationId) />
-            <DL T="Conversation Id" D=@(State.Value.Message!.ConversationId) />
-            <DL T="Sender" D=@(State.Value.Message!.SourceAddress) />
-        </dl>
-        <code>@State.Value.Message.Message</code>
-    </div>
-}
+<Loader IsLoading=@State.Value.Loading>
+    @if (State.Value is null)
+    {
+        <p>Message not found</p>
+    }
+    else
+    {
+        <div class="container">
+            <dl>
+                <DL T="Message Id" D=@(State.Value.Message!.MessageId) />
+                <DL T="Message Type" D=@(State.Value.Message!.MessageType) />
+                <DL T="Correlation Id" D=@(State.Value.Message!.CorrelationId) />
+                <DL T="Conversation Id" D=@(State.Value.Message!.ConversationId) />
+                <DL T="Sender" D=@(State.Value.Message!.SourceAddress) />
+            </dl>
+            <code>@State.Value.Message.Message</code>
+        </div>
+        <FluentAccordion>
+            <FluentAccordionItem @onclick=@LoadActors>
+                <div slot="heading">Actors</div>
+                <Loader IsLoading=@State.Value.LoadingActors>
+                    <div style="height: 200px">
+                        <CascadingValue Value="State.Value.Actors">
+                            <DiagramCanvas></DiagramCanvas>
+                        </CascadingValue>
+                    </div>
+                </Loader>
+            </FluentAccordionItem>
+        </FluentAccordion>
+    }
+</Loader>

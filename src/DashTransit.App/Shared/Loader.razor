@@ -1,0 +1,16 @@
+@code {
+    [Parameter]
+    public bool IsLoading { get; set; } = true;
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}
+
+@if (this.IsLoading)
+{
+    <FluentProgress />
+}
+else
+{
+    @ChildContent
+}

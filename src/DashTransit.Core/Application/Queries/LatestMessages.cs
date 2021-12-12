@@ -16,25 +16,21 @@ public class LatestMessagesQuery : IRequest<IEnumerable<LatestMessages>>
     {
         private readonly IReadRepositoryBase<IRawAuditData> database;
 
-        public Handler(IReadRepositoryBase<IRawAuditData> database)
-        {
-            this.database = database;
-        }
+        public Handler(IReadRepositoryBase<IRawAuditData> database) => this.database = database;
 
         public async Task<IEnumerable<LatestMessages>> Handle(LatestMessagesQuery request, CancellationToken cancellationToken)
-            => await this.database.ListAsync(new Query(), cancellationToken);
+        {
+            return await this.database.ListAsync(new Query(), cancellationToken);
+        }
 
         public class Query : Specification<IRawAuditData, LatestMessages>
         {
             public Query()
             {
-                Query.Where(x => x.MessageId.HasValue && (x.ContextType == "Send" || x.ContextType == "Publish" && x.SentTime.HasValue));
-
-                Query.OrderByDescending(x => x.SentTime);
-
-                Query.Take(50);
-
-                Query.Select(raw => new LatestMessages(AuditId.From(raw.AuditRecordId), MessageType.From(raw.MessageType), raw.SentTime!.Value));
+                this.Query.Where(x => x.MessageId.HasValue && (x.ContextType == "Send" || x.ContextType == "Publish" && x.SentTime.HasValue));
+                this.Query.OrderByDescending(x => x.SentTime);
+                this.Query.Take(50);
+                this.Query.Select(raw => new LatestMessages(AuditId.From(raw.AuditRecordId), MessageType.From(raw.MessageType), raw.SentTime!.Value));
             }
         }
     }

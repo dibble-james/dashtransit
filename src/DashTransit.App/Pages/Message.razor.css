@@ -13,3 +13,7 @@
     margin-right: 1rem;
     overflow-x: auto;
 }
+
+::deep .default-node {
+    background: var(--neutral-layer-3);
+}
