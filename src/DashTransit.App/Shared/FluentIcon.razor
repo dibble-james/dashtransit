@@ -1,0 +1,9 @@
+@code {
+
+    [Parameter]
+    public string Name { get; set; }
+
+    private string Class => $"ms-Icon ms-Icon--{Name}";
+}
+
+<i class="@Class"></i>

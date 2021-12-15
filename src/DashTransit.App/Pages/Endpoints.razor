@@ -1,1 +1,17 @@
 @page "/endpoint"
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@inject IDispatcher Dispatcher
+@inject IState<EndpointsState> State
+
+<Loader IsLoading="@State.Value.Loading">
+    <div class="container">
+        @foreach (var endpoint in this.State.Value.Endpoints)
+        {
+            <FluentCard>
+                <div>
+                    <h2>@endpoint</h2>
+                </div>
+            </FluentCard>
+        }
+    </div>
+</Loader>
