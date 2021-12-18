@@ -8,7 +8,7 @@
 </FluentToolbar>
 
 <Loader IsLoading="@State.Value.Loading">
-    <FluentDataGrid ColumnDefinitions=Columns RowsData=@State.Value.Faults GridTemplateColumns="auto auto auto 6rem">
+    <FluentDataGrid ColumnDefinitions=Columns RowsData=@State.Value.Faults GridTemplateColumns="9rem 1fr 1fr 1fr 6rem">
         <RowItemTemplate>
             <FluentDataGridRow TItem=LatestFault>
                 <FluentDataGridCell GridColumn=1>@context.Produced</FluentDataGridCell>
