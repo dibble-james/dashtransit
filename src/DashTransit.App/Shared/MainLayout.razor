@@ -2,18 +2,14 @@
 
 <PageTitle>DashTransit</PageTitle>
 
-<div class="main-container">
-    <header>
+<main>
+    <nav>
         <h1>DashTransit</h1>
-    </header>
-    <main>
-        <aside>
-            <FluentAnchor class="side-link" href="" Appearance=@Appearance.Lightweight>Dashboard</FluentAnchor>
-            <FluentAnchor class="side-link" href="message" Appearance=@Appearance.Lightweight>Messages</FluentAnchor>
-            <FluentAnchor class="side-link" href="endpoint" Appearance=@Appearance.Lightweight>Endpoints</FluentAnchor>
-        </aside>
-        <article>
-            @Body
-        </article>
-    </main>
-</div>
+        <FluentAnchor class="side-link" href="/" Appearance=@Appearance.Lightweight>Messages</FluentAnchor>
+        <FluentAnchor class="side-link" href="fault" Appearance=@Appearance.Lightweight>Faults</FluentAnchor>
+        <FluentAnchor class="side-link" href="endpoint" Appearance=@Appearance.Lightweight>Endpoints</FluentAnchor>
+    </nav>
+    <article>
+        @Body
+    </article>
+</main>
