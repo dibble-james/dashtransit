@@ -8,7 +8,7 @@ public abstract record Actor(EndpointId Endpoint)
         {
             "send" => new Sender(EndpointId.From(new Uri(audit.SourceAddress))),
             "publish" => new Publisher(EndpointId.From(new Uri(audit.SourceAddress))),
-            "consume" => new Consumer(EndpointId.From(new Uri(audit.DestinationAddress))),
+            "consume" => new Consumer(EndpointId.From(new Uri(audit.InputAddress))),
             _ => throw new InvalidOperationException("Unknown context type for Actor"),
         };
     }

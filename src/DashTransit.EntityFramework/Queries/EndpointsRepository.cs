@@ -22,10 +22,9 @@ public class EndpointsRepository : IEndpointRepository
     {
         var endpoints = await
             this.context.Audit.Select(x => x.SourceAddress)
-                .Union(this.context.Audit.Select(x => x.DestinationAddress))
                 .Union(this.context.Audit.Select(x => x.InputAddress))
                 .Distinct()
-                .Where(x => x != null)
+                .Where(x => x != null && !string.IsNullOrEmpty(x) && !x.EndsWith("temporary=true"))
                 .Select(x => EndpointId.From(new Uri(x)))
                 .ToListAsync(cancellationToken);
 
