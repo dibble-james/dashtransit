@@ -9,12 +9,8 @@ namespace DashTransit.EntityFramework.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.EnsureSchema(
-                name: "mt");
-
             migrationBuilder.CreateTable(
                 name: "__audit",
-                schema: "mt",
                 columns: table => new
                 {
                     AuditRecordId = table.Column<int>(type: "int", nullable: false)
@@ -45,8 +41,7 @@ namespace DashTransit.EntityFramework.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "__audit",
-                schema: "mt");
+                name: "__audit");
         }
     }
 }

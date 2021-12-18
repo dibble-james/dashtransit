@@ -17,7 +17,6 @@ namespace DashTransit.EntityFramework.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("mt")
                 .HasAnnotation("ProductVersion", "6.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
@@ -81,7 +80,7 @@ namespace DashTransit.EntityFramework.Migrations
 
                     b.HasKey("AuditRecordId");
 
-                    b.ToTable("__audit", "mt");
+                    b.ToTable("__audit");
                 });
 #pragma warning restore 612, 618
         }

@@ -17,8 +17,6 @@ public class DashTransitContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema("mt");
-
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(DashTransitContext).Assembly);
 
         base.OnModelCreating(modelBuilder);
