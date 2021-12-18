@@ -5,6 +5,7 @@
 namespace DashTransit.Core
 {
     using System;
+    using Application.Commands;
     using GreenPipes;
     using MassTransit;
     using MassTransit.ExtensionsDependencyInjectionIntegration;
@@ -27,7 +28,7 @@ namespace DashTransit.Core
         {
             bus.ReceiveEndpoint("dashtransit-faults", endpoint =>
             {
-                endpoint.UseInMemoryOutbox();
+                endpoint.ConfigureConsumer<RegisterFault.Consumer>(context);
                 endpoint.UseMessageRetry(retry => retry.Incremental(5, TimeSpan.FromSeconds(0.1), TimeSpan.FromSeconds(0.5)));
             });
         }

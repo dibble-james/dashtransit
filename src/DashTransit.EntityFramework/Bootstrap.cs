@@ -12,6 +12,7 @@ public static class Bootstrap
     {
         services.AddDbContext<DashTransitContext>(opt => opt.UseSqlServer(connectionString));
         services.AddTransient(typeof(IReadRepositoryBase<>), typeof(Repository<>));
+        services.AddTransient(typeof(IRepositoryBase<>), typeof(Repository<>));
         services.AddTransient<IReadRepositoryBase<IRawAuditData>, Repository<IRawAuditData>>();
         services.AddTransient<IEndpointRepository, EndpointsRepository>();
     }

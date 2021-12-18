@@ -5,5 +5,6 @@ global using System.Threading;
 global using System.Threading.Tasks;
 global using Ardalis.Specification;
 global using DashTransit.Core.Domain;
+global using MassTransit;
 global using MediatR;
 global using ValueOf;

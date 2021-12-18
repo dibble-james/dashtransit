@@ -10,21 +10,29 @@ public class FaultId : ValueOf<int, FaultId>
 
 public class Fault
 {
-    protected Fault(FaultId id, MessageId messageId, string exception)
+    protected Fault(FaultId id, string exception, DateTime produced, EndpointId producedBy)
+        : this(default(MessageId)!, exception, produced, producedBy)
     {
         this.Id = id;
+    }
+
+    public Fault(MessageId messageId, string exception, DateTime produced, EndpointId producedBy)
+    {
         this.MessageId = messageId;
         this.Exception = exception;
+        this.Produced = produced;
+        this.ProducedBy = producedBy;
     }
 
-    public Fault(MessageId messageId, string exception)
-        : this(FaultId.From(0), messageId, exception)
-    {
-    }
+    public FaultId Id { get; } = null!;
 
-    public FaultId Id { get; }
-
-    public MessageId MessageId { get; }
+    public virtual MessageId MessageId { get; }
 
     public string Exception { get; }
+
+    public DateTime Produced { get; }
+
+    public EndpointId ProducedBy { get; }
+
+    public IRawAuditData? Message { get; protected set; }
 }

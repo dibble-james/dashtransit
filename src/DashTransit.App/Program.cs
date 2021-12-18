@@ -1,8 +1,7 @@
 using DashTransit.Core;
 using DashTransit.EntityFramework;
 using Fluxor;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
+using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +12,16 @@ builder.Services.AddFluxor(opt => opt.ScanAssemblies(typeof(Program).Assembly));
 
 builder.Services.AddDashTransit();
 builder.Services.UseDashTransitEntityFramework(builder.Configuration.GetConnectionString("store"));
+builder.Services.AddMassTransitHostedService();
+builder.Services.AddMassTransit(bus =>
+{
+    bus.AddDashTransit();
+    bus.UsingRabbitMq((context, rabbit) =>
+    {
+        rabbit.Host("amqp://guest:guest@localhost:5672");
+        rabbit.UseDashTransit(context);
+    });
+});
 
 var app = builder.Build();
 

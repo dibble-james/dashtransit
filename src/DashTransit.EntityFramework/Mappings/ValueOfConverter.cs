@@ -2,7 +2,9 @@ namespace DashTransit.EntityFramework.Mappings;
 
 using System;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.EntityFrameworkCore.ValueGeneration;
 using ValueOf;
 
 public class GuidValueOfConverter<T> : ValueConverter<T, Guid>
@@ -55,4 +57,15 @@ public class IntValueOfConverter<T> : ValueConverter<T, int>
     private static Expression<Func<T, int>> Out => value => value.Value;
 
     private static Expression<Func<int, T>> In => value => ValueOf<int, T>.From(value);
+}
+
+public class IntValueOfGenerator<T> : ValueGenerator<T>
+    where T : ValueOf<int, T>, new()
+{
+    public override T Next(EntityEntry entry)
+    {
+        return ValueOf<int, T>.From(0);
+    }
+
+    public override bool GeneratesTemporaryValues => true;
 }

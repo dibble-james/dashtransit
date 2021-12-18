@@ -12,20 +12,46 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DashTransit.EntityFramework.Migrations
 {
     [DbContext(typeof(DashTransitContext))]
-    [Migration("20211205181948_Audit")]
-    partial class Audit
+    [Migration("20211218205706_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("mt")
                 .HasAnnotation("ProductVersion", "6.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("MassTransit.EntityFrameworkCoreIntegration.Audit.AuditRecord", b =>
+            modelBuilder.Entity("DashTransit.Core.Domain.Fault", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Exception")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("MessageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Produced")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ProducedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Fault");
+                });
+
+            modelBuilder.Entity("DashTransit.EntityFramework.Entities.RawAudit", b =>
                 {
                     b.Property<int>("AuditRecordId")
                         .ValueGeneratedOnAdd()
@@ -83,7 +109,7 @@ namespace DashTransit.EntityFramework.Migrations
 
                     b.HasKey("AuditRecordId");
 
-                    b.ToTable("__audit", "mt");
+                    b.ToTable("__audit", (string)null);
                 });
 #pragma warning restore 612, 618
         }

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DashTransit.EntityFramework.Migrations
 {
-    public partial class Audit : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -36,12 +36,31 @@ namespace DashTransit.EntityFramework.Migrations
                 {
                     table.PrimaryKey("PK___audit", x => x.AuditRecordId);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "Fault",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MessageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Exception = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Produced = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ProducedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Fault", x => x.Id);
+                });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
                 name: "__audit");
+
+            migrationBuilder.DropTable(
+                name: "Fault");
         }
     }
 }

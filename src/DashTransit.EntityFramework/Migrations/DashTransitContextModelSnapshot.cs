@@ -25,7 +25,10 @@ namespace DashTransit.EntityFramework.Migrations
             modelBuilder.Entity("DashTransit.Core.Domain.Fault", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Exception")
                         .IsRequired()
@@ -33,6 +36,13 @@ namespace DashTransit.EntityFramework.Migrations
 
                     b.Property<Guid>("MessageId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Produced")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ProducedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
