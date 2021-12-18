@@ -22,7 +22,24 @@ namespace DashTransit.EntityFramework.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("MassTransit.EntityFrameworkCoreIntegration.Audit.AuditRecord", b =>
+            modelBuilder.Entity("DashTransit.Core.Domain.Fault", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Exception")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("MessageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Fault");
+                });
+
+            modelBuilder.Entity("DashTransit.EntityFramework.Entities.RawAudit", b =>
                 {
                     b.Property<int>("AuditRecordId")
                         .ValueGeneratedOnAdd()
@@ -80,7 +97,7 @@ namespace DashTransit.EntityFramework.Migrations
 
                     b.HasKey("AuditRecordId");
 
-                    b.ToTable("__audit");
+                    b.ToTable("__audit", (string)null);
                 });
 #pragma warning restore 612, 618
         }

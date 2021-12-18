@@ -43,3 +43,16 @@ public class UriValueOfConverter<T> : ValueConverter<T, string>
 
     private static Expression<Func<string, T>> In => value => ValueOf<Uri, T>.From(new Uri(value));
 }
+
+public class IntValueOfConverter<T> : ValueConverter<T, int>
+    where T : ValueOf<int, T>, new()
+{
+    public IntValueOfConverter()
+        : base(Out, In)
+    {
+    }
+
+    private static Expression<Func<T, int>> Out => value => value.Value;
+
+    private static Expression<Func<int, T>> In => value => ValueOf<int, T>.From(value);
+}

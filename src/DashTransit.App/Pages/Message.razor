@@ -1,11 +1,14 @@
 @page "/message/{AuditId:int}"
+@using Newtonsoft.Json
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 @inject IDispatcher Dispatcher
 @inject IState<MessageState> State
 
 @code {
+
     [Parameter]
     public int AuditId { get; set; }
+
 }
 
 <Loader IsLoading=@State.Value.Loading>
@@ -16,20 +19,32 @@
     else
     {
         <div class="container">
-            <dl>
-                <DL T="Message Id" D=@(State.Value.Message!.MessageId) />
-                <DL T="Message Type" D=@(State.Value.Message!.MessageType) />
-                <DL T="Correlation Id" D=@(State.Value.Message!.CorrelationId) />
-                <DL T="Conversation Id" D=@(State.Value.Message!.ConversationId) />
-                <DL T="Sender" D=@(State.Value.Message!.SourceAddress) />
-            </dl>
-            <code>@State.Value.Message.Message</code>
+            <div>
+                <h3>Message Properties</h3>
+                <dl>
+                    <DL T="Message Id" D=@(State.Value.Message!.MessageId) />
+                    <DL T="Message Type" D=@(State.Value.Message!.MessageType) />
+                    <DL T="Correlation Id" D=@(State.Value.Message!.CorrelationId) />
+                    <DL T="Conversation Id" D=@(State.Value.Message!.ConversationId) />
+                    <DL T="Sender" D=@(State.Value.Message!.SourceAddress) />
+                </dl>
+            </div>
+            <pre>@JsonConvert.SerializeObject(State.Value.Message!.Message, Formatting.Indented)</pre>
+            <div>
+                <h3>Headers</h3>
+                <dl>
+                    @foreach (var header in State.Value.Message.Headers)
+                    {
+                        <DL T=@header.Key D=@header.Value />
+                    }
+                </dl>
+            </div>
         </div>
-        <FluentAccordion>
+        <FluentAccordion style="margin: 1rem">
             <FluentAccordionItem @onclick=@LoadActors>
                 <div slot="heading">Actors</div>
                 <Loader IsLoading=@State.Value.LoadingActors>
-                    <div style="height: 200px">
+                    <div style="height: 25vh">
                         <CascadingValue Value="State.Value.Actors">
                             <DiagramCanvas></DiagramCanvas>
                         </CascadingValue>
