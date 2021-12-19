@@ -1,0 +1,32 @@
+@page "/fault/{FaultId:int}"
+@using Newtonsoft.Json
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@inject IDispatcher Dispatcher
+@inject IState<FaultState> State
+
+@code {
+
+    [Parameter]
+    public int FaultId { get; set; }
+
+}
+
+<Loader IsLoading=@State.Value.Loading>
+    <div class="container">
+        @if (State.Value is null)
+        {
+            <p>Message not found</p>
+        }
+        else
+        {
+            <div>
+                <h3>@State.Value.Fault.Exception</h3>
+                <dl>
+                    <DL T="Message Id" D=@(State.Value.Fault!.MessageId)/>
+                    <DL T="Faulted" D=@(State.Value.Fault!.Produced)/>
+                    <DL T="Endpoint" D=@(State.Value.Fault!.ProducedBy)/>
+                </dl>
+            </div>
+        }
+    </div>
+</Loader>
