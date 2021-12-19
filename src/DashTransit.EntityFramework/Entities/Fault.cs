@@ -10,6 +10,7 @@ using Core.Domain;
 public class Fault : Core.Domain.Fault
 {
     private readonly Guid _rawMessageId;
+    private RawAudit _message;
 
     protected Fault(FaultId id, string exception, DateTime produced, EndpointId producedBy)
         : base(id, exception, produced, producedBy)
@@ -24,5 +25,5 @@ public class Fault : Core.Domain.Fault
 
     public override MessageId MessageId => MessageId.From(this._rawMessageId);
 
-    public new RawAudit Message { get; protected set; }
+    public override RawAudit Message { get; }
 }

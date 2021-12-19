@@ -16,7 +16,8 @@ public record FaultById(FaultId FaultId) : IRequest<Fault?>
 
         public async Task<Fault?> Handle(FaultById request, CancellationToken cancellationToken)
         {
-            return await this.database.GetBySpecAsync(new Query(request.FaultId), cancellationToken);
+            var fault = await this.database.GetBySpecAsync(new Query(request.FaultId), cancellationToken);
+            return fault;
         }
 
         private class Query : Specification<Fault>, ISingleResultSpecification

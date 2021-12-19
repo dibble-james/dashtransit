@@ -22,7 +22,9 @@
             <div>
                 <h3>@State.Value.Fault.Exception</h3>
                 <dl>
-                    <DL T="Message Id" D=@(State.Value.Fault!.MessageId)/>
+                    <DL T="Message Id">
+                        <FluentAnchor Appearance="Appearance.Hypertext" Href=@($"/message/{State.Value.Fault!.Message!.AuditRecordId}")>@(State.Value.Fault!.MessageId)</FluentAnchor>
+                    </DL>
                     <DL T="Faulted" D=@(State.Value.Fault!.Produced)/>
                     <DL T="Endpoint" D=@(State.Value.Fault!.ProducedBy)/>
                 </dl>

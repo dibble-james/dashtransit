@@ -3,11 +3,20 @@
     public string T { get; set; } = string.Empty;
 
     [Parameter]
-    public object? D { get; set; }
+    public object? D { get; set; } = null;
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
 }
 
 @if (this.D is not null)
 {
     <dt>@T</dt>
     <dd>@D</dd>
+}
+
+@if (this.ChildContent is not null)
+{
+    <dt>@T</dt>
+    <dd>@ChildContent</dd>
 }

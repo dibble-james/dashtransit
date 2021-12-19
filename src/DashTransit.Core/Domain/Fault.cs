@@ -34,5 +34,5 @@ public class Fault
 
     public EndpointId ProducedBy { get; }
 
-    public IRawAuditData? Message { get; protected set; }
+    public virtual IRawAuditData? Message { get; }
 }

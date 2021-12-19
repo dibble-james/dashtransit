@@ -29,6 +29,7 @@ public class LatestFaultsQuery : IRequest<IEnumerable<LatestFault>>
             {
                 this.Query.Take(50);
                 this.Query.OrderByDescending(x => x.Produced);
+                this.Query.Where(x => new[] {"Publish", "Send"}.Contains(x.Message!.ContextType));
                 this.Query.Select(x => new LatestFault(x.Id, x.Exception, x.Produced, x.ProducedBy, MessageType.From(x.Message!.MessageType)));
             }
         }
