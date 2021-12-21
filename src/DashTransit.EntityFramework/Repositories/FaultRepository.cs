@@ -1,4 +1,4 @@
-namespace DashTransit.EntityFramework;
+namespace DashTransit.EntityFramework.Repositories;
 
 using System;
 using System.Collections.Generic;
@@ -13,60 +13,25 @@ using Microsoft.EntityFrameworkCore;
 using Fault = Entities.Fault;
 using DomainFault = Core.Domain.Fault;
 
-public class Repository<T> : RepositoryBase<T>, IReadRepositoryBase<IRawAuditData>, IRepositoryBase<DomainFault>
-    where T : class
+public class FaultRepository : RepositoryBase<DomainFault>
 {
     private readonly DashTransitContext context;
 
-    public Repository(DashTransitContext context)
-        : base(context)
-    {
+    public FaultRepository(DashTransitContext context)
+        : base(context) =>
         this.context = context;
-    }
 
-    Task<int> IReadRepositoryBase<IRawAuditData>.CountAsync(ISpecification<IRawAuditData> specification,
-        CancellationToken cancellationToken = default)
-        => SpecificationEvaluator.Default.GetQuery(this.context.Set<RawAudit>(), specification)
-            .CountAsync(cancellationToken);
-
-    Task<TResult> IReadRepositoryBase<IRawAuditData>.GetBySpecAsync<TResult>(
-        ISpecification<IRawAuditData, TResult> specification, CancellationToken cancellationToken = default)
-        => SpecificationEvaluator.Default.GetQuery(this.context.Set<RawAudit>(), specification)
-            .FirstOrDefaultAsync(cancellationToken);
-
-    Task<List<IRawAuditData>> IReadRepositoryBase<IRawAuditData>.ListAsync(ISpecification<IRawAuditData> specification,
-        CancellationToken cancellationToken = default)
-        => SpecificationEvaluator.Default.GetQuery(this.context.Set<RawAudit>(), specification)
-            .ToListAsync(cancellationToken);
-
-    Task<List<TResult>> IReadRepositoryBase<IRawAuditData>.ListAsync<TResult>(
-        ISpecification<IRawAuditData, TResult> specification, CancellationToken cancellationToken = default)
-        => SpecificationEvaluator.Default.GetQuery(this.context.Set<RawAudit>(), specification)
-            .ToListAsync(cancellationToken);
-
-    async Task<IRawAuditData> IReadRepositoryBase<IRawAuditData>.GetByIdAsync<TId>(TId id,
-        CancellationToken cancellationToken)
-        => await this.context.Set<RawAudit>().FindAsync(new object[] {id}, cancellationToken: cancellationToken);
-
-    Task<IRawAuditData> IReadRepositoryBase<IRawAuditData>.GetBySpecAsync<Spec>(Spec specification,
-        CancellationToken cancellationToken)
-        => SpecificationEvaluator.Default.GetQuery(this.context.Set<RawAudit>(), specification)
-            .FirstOrDefaultAsync(cancellationToken);
-
-    async Task<List<IRawAuditData>> IReadRepositoryBase<IRawAuditData>.ListAsync(CancellationToken cancellationToken)
-        => (await this.context.Set<RawAudit>().ToListAsync(cancellationToken)).Cast<IRawAuditData>().ToList();
-
-    Task<int> IReadRepositoryBase<DomainFault>.CountAsync(ISpecification<DomainFault> specification,
+    public override Task<int> CountAsync(ISpecification<DomainFault> specification,
         CancellationToken cancellationToken = default)
         => SpecificationEvaluator.Default.GetQuery(this.context.Set<Fault>(), specification)
             .CountAsync(cancellationToken);
 
-    Task<TResult> IReadRepositoryBase<DomainFault>.GetBySpecAsync<TResult>(
+    public override Task<TResult> GetBySpecAsync<TResult>(
         ISpecification<DomainFault, TResult> specification, CancellationToken cancellationToken = default)
         => SpecificationEvaluator.Default.GetQuery(this.context.Set<Fault>(), specification)
             .FirstOrDefaultAsync(cancellationToken);
 
-    async Task<List<DomainFault>> IReadRepositoryBase<DomainFault>.ListAsync(ISpecification<DomainFault> specification,
+    public async override Task<List<DomainFault>> ListAsync(ISpecification<DomainFault> specification,
         CancellationToken cancellationToken = default)
     {
         var query = await SpecificationEvaluator.Default.GetQuery(this.context.Set<Fault>(), specification)
@@ -84,16 +49,16 @@ public class Repository<T> : RepositoryBase<T>, IReadRepositoryBase<IRawAuditDat
         return result.ToList();
     }
 
-    Task<List<TResult>> IReadRepositoryBase<DomainFault>.ListAsync<TResult>(
+    public override Task<List<TResult>> ListAsync<TResult>(
         ISpecification<DomainFault, TResult> specification, CancellationToken cancellationToken = default)
         => SpecificationEvaluator.Default.GetQuery(this.context.Set<Fault>(), specification)
             .ToListAsync(cancellationToken);
 
-    async Task<DomainFault> IReadRepositoryBase<DomainFault>.GetByIdAsync<TId>(TId id,
+    public async override Task<DomainFault> GetByIdAsync<TId>(TId id,
         CancellationToken cancellationToken)
         => await this.context.Set<Fault>().FindAsync(new object[] {id}, cancellationToken: cancellationToken);
 
-    async Task<DomainFault> IReadRepositoryBase<DomainFault>.GetBySpecAsync<Spec>(Spec specification,
+    public async override Task<DomainFault> GetBySpecAsync<Spec>(Spec specification,
         CancellationToken cancellationToken)
     {
         var query = await SpecificationEvaluator.Default.GetQuery(this.context.Set<Fault>(), specification)
@@ -111,7 +76,7 @@ public class Repository<T> : RepositoryBase<T>, IReadRepositoryBase<IRawAuditDat
         return result.First();
     }
 
-    async Task<List<DomainFault>> IReadRepositoryBase<DomainFault>.ListAsync(CancellationToken cancellationToken)
+    public async Task<List<DomainFault>> ListAsync(CancellationToken cancellationToken)
     {
         return (await this.context.Set<Fault>().ToListAsync(cancellationToken)).Cast<DomainFault>().ToList();
     }

@@ -2,7 +2,7 @@
 // Copyright (c) James Dibble. All rights reserved.
 // </copyright>
 
-namespace DashTransit.EntityFramework.Queries;
+namespace DashTransit.EntityFramework.Repositories;
 
 using System;
 using System.Collections.Generic;
