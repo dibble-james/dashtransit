@@ -10,16 +10,17 @@ public class FaultId : ValueOf<int, FaultId>
 
 public class Fault
 {
-    protected Fault(FaultId id, string exception, DateTime produced, EndpointId producedBy)
-        : this(default(MessageId)!, exception, produced, producedBy)
+    protected Fault(FaultId id, MessageId messageId, IEnumerable<ExceptionInfo> exceptions, DateTime produced,
+        EndpointId producedBy)
+        : this(messageId, exceptions, produced, producedBy)
     {
         this.Id = id;
     }
 
-    public Fault(MessageId messageId, string exception, DateTime produced, EndpointId producedBy)
+    public Fault(MessageId messageId, IEnumerable<ExceptionInfo> exceptions, DateTime produced, EndpointId producedBy)
     {
         this.MessageId = messageId;
-        this.Exception = exception;
+        this.Exceptions = exceptions;
         this.Produced = produced;
         this.ProducedBy = producedBy;
     }
@@ -28,11 +29,13 @@ public class Fault
 
     public virtual MessageId MessageId { get; }
 
-    public string Exception { get; }
+    public virtual IEnumerable<ExceptionInfo> Exceptions { get; }
 
     public DateTime Produced { get; }
 
     public EndpointId ProducedBy { get; }
 
-    public virtual IRawAuditData? Message { get; }
+    public virtual IReadOnlyCollection<IRawAuditData> Messages { get; } = new List<IRawAuditData>();
+
+    public IRawAuditData? Message => this.Messages.FirstOrDefault(Core.Domain.Message.IsProducer);
 }

@@ -8,7 +8,7 @@ using Ardalis.Specification;
 using DashTransit.Core.Domain;
 using MediatR;
 
-public record LatestFault(FaultId Id, string Exception, DateTime Produced, EndpointId ProducedBy, MessageType Type);
+public record LatestFault(FaultId Id, string? Exception, DateTime Produced, EndpointId ProducedBy, MessageType Type);
 
 public class LatestFaultsQuery : IRequest<IEnumerable<LatestFault>>
 {
@@ -20,17 +20,17 @@ public class LatestFaultsQuery : IRequest<IEnumerable<LatestFault>>
 
         public async Task<IEnumerable<LatestFault>> Handle(LatestFaultsQuery request, CancellationToken cancellationToken)
         {
-            return await this.database.ListAsync(new Query(), cancellationToken);
+            var faults = await this.database.ListAsync(new Query(), cancellationToken);
+            return faults.Select(x => new LatestFault(x.Id, x.Exceptions.FirstOrDefault()?.Message, x.Produced, x.ProducedBy,
+                MessageType.From(x.Message?.MessageType ?? "Unknown")));
         }
 
-        public class Query : Specification<Fault, LatestFault>
+        public class Query : Specification<Fault>
         {
             public Query()
             {
                 this.Query.Take(50);
                 this.Query.OrderByDescending(x => x.Produced);
-                this.Query.Where(x => new[] {"Publish", "Send"}.Contains(x.Message!.ContextType));
-                this.Query.Select(x => new LatestFault(x.Id, x.Exception, x.Produced, x.ProducedBy, MessageType.From(x.Message!.MessageType)));
             }
         }
     }

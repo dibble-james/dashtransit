@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public interface IRawAuditData
 {
     int AuditRecordId { get; }
-    Guid? MessageId { get; }
+    MessageId? MessageId { get; }
     Guid? ConversationId { get; }
     Guid? CorrelationId { get; }
     Guid? InitiatorId { get; }

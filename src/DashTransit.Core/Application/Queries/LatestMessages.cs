@@ -27,7 +27,7 @@ public class LatestMessagesQuery : IRequest<IEnumerable<LatestMessages>>
         {
             public Query()
             {
-                this.Query.Where(x => !x.MessageType.StartsWith("MassTransit.Fault") && x.MessageId.HasValue && (x.ContextType == "Send" || x.ContextType == "Publish" && x.SentTime.HasValue));
+                this.Query.Where(x => !x.MessageType.StartsWith("MassTransit.Fault") && x.MessageId != null && (x.ContextType == "Send" || x.ContextType == "Publish" && x.SentTime.HasValue));
                 this.Query.OrderByDescending(x => x.SentTime);
                 this.Query.Take(50);
                 this.Query.Select(raw => new LatestMessages(AuditId.From(raw.AuditRecordId), MessageType.From(raw.MessageType), raw.SentTime!.Value));

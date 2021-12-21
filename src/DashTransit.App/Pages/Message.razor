@@ -12,7 +12,7 @@
 }
 
 <Loader IsLoading=@State.Value.Loading>
-    @if (State.Value is null)
+    @if (State.Value.Message is null)
     {
         <p>Message not found</p>
     }

@@ -17,7 +17,7 @@ public record MessageActors(MessageId Id) : IRequest<IEnumerable<Actor>>
 
         public class Query : Specification<IRawAuditData>
         {
-            public Query(MessageId id) => this.Query.Where(x => x.MessageId == id.Value);
+            public Query(MessageId id) => this.Query.Where(x => x.MessageId == id);
         }
     }
 }

@@ -20,7 +20,7 @@
         else
         {
             <div>
-                <h3>@State.Value.Fault.Exception</h3>
+                <h3>@State.Value.Fault!.Exceptions.First().Message</h3>
                 <dl>
                     <DL T="Message Id">
                         <FluentAnchor Appearance="Appearance.Hypertext" Href=@($"/message/{State.Value.Fault!.Message!.AuditRecordId}")>@(State.Value.Fault!.MessageId)</FluentAnchor>

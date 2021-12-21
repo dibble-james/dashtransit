@@ -5,25 +5,29 @@
 namespace DashTransit.EntityFramework.Entities;
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Core.Domain;
+using MassTransit;
 
 public class Fault : Core.Domain.Fault
 {
-    private readonly Guid _rawMessageId;
-    private RawAudit _message;
-
-    protected Fault(FaultId id, string exception, DateTime produced, EndpointId producedBy)
-        : base(id, exception, produced, producedBy)
+    protected Fault(FaultId id, MessageId messageId, IEnumerable<ExceptionInfo> exceptions, DateTime produced, EndpointId producedBy)
+        : base(id, messageId, exceptions, produced, producedBy)
     {
     }
 
-    public Fault(MessageId messageId, string exception, DateTime produced, EndpointId producedBy)
-        : base(messageId, exception, produced, producedBy)
+    public Fault(MessageId messageId, IEnumerable<ExceptionInfo> exceptions, DateTime produced, EndpointId producedBy, IReadOnlyCollection<IRawAuditData> messages)
+        : base(messageId, exceptions, produced, producedBy)
     {
-        this._rawMessageId = messageId.Value;
+        this.Messages = messages;
     }
 
-    public override MessageId MessageId => MessageId.From(this._rawMessageId);
+    public Fault(FaultId id, MessageId messageId, IEnumerable<ExceptionInfo> exceptions, DateTime produced, EndpointId producedBy, IReadOnlyCollection<IRawAuditData> messages)
+        : this(id, messageId, exceptions, produced, producedBy)
+    {
+        this.Messages = messages;
+    }
 
-    public override RawAudit Message { get; }
+    public override IReadOnlyCollection<IRawAuditData> Messages { get; }
 }

@@ -5,7 +5,11 @@
 namespace DashTransit.EntityFramework.Mappings;
 
 using System;
+using System.Collections.Generic;
 using Core.Domain;
+using Entities;
+using MassTransit;
+using MassTransit.EntityFrameworkCoreIntegration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Fault = Entities.Fault;
@@ -19,11 +23,9 @@ public class FaultMapping : IEntityTypeConfiguration<Fault>
             .UseIdentityColumn()
             .ValueGeneratedOnAdd()
             .HasValueGenerator<IntValueOfGenerator<FaultId>>();
-        builder.Property<Guid>("_rawMessageId").UsePropertyAccessMode(PropertyAccessMode.Field).HasColumnName("MessageId");
-        builder.Ignore(x => x.MessageId);
-        builder.Property(x => x.Exception);
+        builder.Property(x => x.MessageId).HasConversion<GuidValueOfConverter<MessageId>>();
+        builder.Property(x => x.Exceptions).HasConversion(new JsonValueConverter<IEnumerable<ExceptionInfo>>());
         builder.Property(x => x.Produced);
         builder.Property(x => x.ProducedBy).HasConversion<UriValueOfConverter<EndpointId>>();
-        builder.HasOne(x => x.Message).WithMany().HasForeignKey("_rawMessageId").HasPrincipalKey(x => x.MessageId);
     }
 }

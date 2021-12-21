@@ -18,7 +18,7 @@ public record MessageByAuditId(AuditId Id) : IRequest<IRawAuditData?>
         {
             var message = await this.database.GetBySpecAsync(new Query(request.Id), cancellationToken);
 
-            return (message?.MessageId.HasValue).GetValueOrDefault() ? message : null;
+            return message;
         }
 
         public class Query : Specification<IRawAuditData>, ISingleResultSpecification

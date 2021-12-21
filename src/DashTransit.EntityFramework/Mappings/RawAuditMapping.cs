@@ -1,6 +1,7 @@
 namespace DashTransit.EntityFramework.Mappings;
 
 using System.Collections.Generic;
+using Core.Domain;
 using DashTransit.EntityFramework.Entities;
 using MassTransit.EntityFrameworkCoreIntegration;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,7 @@ public class RawAuditMapping : IEntityTypeConfiguration<RawAudit>
             .ValueGeneratedOnAdd();
 
         builder.Property(x => x.ContextType);
-        builder.Property(x => x.MessageId);
+        builder.Property(x => x.MessageId).HasConversion<GuidValueOfConverter<MessageId>>();;
         builder.Property(x => x.InitiatorId);
         builder.Property(x => x.ConversationId);
         builder.Property(x => x.CorrelationId);

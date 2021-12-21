@@ -25,7 +25,6 @@ public record FaultById(FaultId FaultId) : IRequest<Fault?>
             public Query(FaultId id)
             {
                 this.Query.Where(x => x.Id == id);
-                this.Query.Include(x => x.Message);
             }
         }
     }

@@ -19,7 +19,7 @@ public record RegisterFault(MassTransit.Fault Fault, EndpointId Endpoint) : IReq
             await this.repository.AddAsync(
                 new Fault(
                     MessageId.From(request.Fault.FaultedMessageId!.Value),
-                    request.Fault.Exceptions.First().Message,
+                    request.Fault.Exceptions,
                     request.Fault.Timestamp,
                     request.Endpoint),
                 cancellationToken);
