@@ -3,6 +3,8 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 @inject IDispatcher Dispatcher
 @inject IState<MessageState> State
+@using DashTransit.App.Components
+
 
 @code {
 
@@ -22,11 +24,11 @@
             <div>
                 <h3>Message Properties</h3>
                 <dl>
-                    <DL T="Message Id" D=@(State.Value.Message!.MessageId) />
-                    <DL T="Message Type" D=@(State.Value.Message!.MessageType) />
-                    <DL T="Correlation Id" D=@(State.Value.Message!.CorrelationId) />
-                    <DL T="Conversation Id" D=@(State.Value.Message!.ConversationId) />
-                    <DL T="Sender" D=@(State.Value.Message!.SourceAddress) />
+                    <DL T="Message Id" D=@(State.Value.Message!.MessageId)/>
+                    <DL T="Message Type" D=@(State.Value.Message!.MessageType)/>
+                    <DL T="Correlation Id" D=@(State.Value.Message!.CorrelationId)/>
+                    <DL T="Conversation Id" D=@(State.Value.Message!.ConversationId)/>
+                    <DL T="Sender" D=@(State.Value.Message!.SourceAddress)/>
                 </dl>
             </div>
             <pre>@JsonConvert.SerializeObject(State.Value.Message!.Message, Formatting.Indented)</pre>
@@ -35,22 +37,14 @@
                 <dl>
                     @foreach (var header in State.Value.Message.Headers)
                     {
-                        <DL T=@header.Key D=@header.Value />
+                        <DL T=@header.Key D=@header.Value/>
                     }
                 </dl>
             </div>
         </div>
-        <FluentAccordion style="margin: 1rem">
-            <FluentAccordionItem @onclick=@LoadActors>
-                <div slot="heading">Actors</div>
-                <Loader IsLoading=@State.Value.LoadingActors>
-                    <div style="height: 25vh">
-                        <CascadingValue Value="State.Value.Actors">
-                            <DiagramCanvas></DiagramCanvas>
-                        </CascadingValue>
-                    </div>
-                </Loader>
-            </FluentAccordionItem>
-        </FluentAccordion>
+        <div class="accordions">
+            <Actors MessageId="State.Value.Message!.MessageId"/>
+            <Conversation ConversationId="State.Value.Message!.ConversationId.Value"/>
+        </div>
     }
 </Loader>

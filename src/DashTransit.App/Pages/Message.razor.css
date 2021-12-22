@@ -20,3 +20,7 @@ pre {
 ::deep .default-node {
     background: var(--neutral-layer-3);
 }
+
+.accordions ::deep fluent-accordion {
+    margin: 1rem;
+}
