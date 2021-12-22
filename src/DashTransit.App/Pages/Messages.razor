@@ -1,4 +1,4 @@
-@page "/"
+@page "/message"
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 @inject IDispatcher Dispatcher
 @inject IState<MessagesState> State
@@ -8,12 +8,13 @@
 </FluentToolbar>
 
 <Loader IsLoading="@State.Value.Loading">
-    <FluentDataGrid ColumnDefinitions=Columns RowsData=@State.Value.Messages GridTemplateColumns="9rem 1fr 6rem">
+    <FluentDataGrid ColumnDefinitions=Columns RowsData=@State.Value.Messages GridTemplateColumns="9rem 1fr 1fr 6rem">
         <RowItemTemplate>
             <FluentDataGridRow TItem=LatestMessages>
                 <FluentDataGridCell GridColumn=1>@context.Sent</FluentDataGridCell>
-                <FluentDataGridCell GridColumn=2>@context.MessageType</FluentDataGridCell>
-                <FluentDataGridCell GridColumn=3>
+                <FluentDataGridCell GridColumn=2>@context.Sender</FluentDataGridCell>
+                <FluentDataGridCell GridColumn=3>@context.MessageType</FluentDataGridCell>
+                <FluentDataGridCell GridColumn=4>
                     <FluentAnchor href=@($"message/{context.Id}")>Details</FluentAnchor>
                 </FluentDataGridCell>
             </FluentDataGridRow>
@@ -26,6 +27,7 @@
     private readonly List<ColumnDefinition<LatestMessages>> Columns = new List<ColumnDefinition<LatestMessages>>
     {
         new ColumnDefinition<LatestMessages>("Sent", x => x.Sent),
+        new ColumnDefinition<LatestMessages>("Sender", x => x.Sender),
         new ColumnDefinition<LatestMessages>("Type", x => x.MessageType),
         new ColumnDefinition<LatestMessages>("", x => x),
     };

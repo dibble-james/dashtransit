@@ -8,7 +8,7 @@ using Ardalis.Specification;
 using DashTransit.Core.Domain;
 using MediatR;
 
-public record LatestMessages(AuditId Id, MessageType MessageType, DateTime Sent);
+public record LatestMessages(AuditId Id, MessageType MessageType, DateTime Sent, EndpointId Sender);
 
 public class LatestMessagesQuery : IRequest<IEnumerable<LatestMessages>>
 {
@@ -30,7 +30,7 @@ public class LatestMessagesQuery : IRequest<IEnumerable<LatestMessages>>
                 this.Query.Where(x => !x.MessageType.StartsWith("MassTransit.Fault") && x.MessageId != null && (x.ContextType == "Send" || x.ContextType == "Publish" && x.SentTime.HasValue));
                 this.Query.OrderByDescending(x => x.SentTime);
                 this.Query.Take(50);
-                this.Query.Select(raw => new LatestMessages(AuditId.From(raw.AuditRecordId), MessageType.From(raw.MessageType), raw.SentTime!.Value));
+                this.Query.Select(raw => new LatestMessages(AuditId.From(raw.AuditRecordId), MessageType.From(raw.MessageType), raw.SentTime!.Value, EndpointId.From(new Uri(raw.SourceAddress))));
             }
         }
     }

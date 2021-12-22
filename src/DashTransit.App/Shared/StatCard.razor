@@ -1,0 +1,26 @@
+@code {
+    [Parameter, EditorRequired]
+    public string Title { get; init; }
+
+    [Parameter, EditorRequired]
+    public string Rate { get; init; }
+
+    [Parameter, EditorRequired]
+    public string Stat { get; init; }
+
+    [Parameter, EditorRequired]
+    public bool Loading { get; init; }
+}
+
+<FluentCard>
+    @if (Loading)
+    {
+        <FluentProgressRing />
+    }
+    else
+    {
+        <span>@Title</span>
+        <span>@Stat</span>
+        <span>@Rate</span>
+    }
+</FluentCard>

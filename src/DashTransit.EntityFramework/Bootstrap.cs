@@ -10,10 +10,14 @@ public static class Bootstrap
 {
     public static void UseDashTransitEntityFramework(this IServiceCollection services, string connectionString)
     {
-        services.AddDbContext<DashTransitContext>(opt => opt.UseSqlServer(connectionString));
+        services.AddDbContext<DashTransitContext>(opt =>
+        {
+            opt.UseSqlServer(connectionString);
+        }, ServiceLifetime.Transient);
         services.AddTransient<IRepositoryBase<Fault>, FaultRepository>();
         services.AddTransient<IReadRepositoryBase<Fault>, FaultRepository>();
         services.AddTransient<IReadRepositoryBase<IRawAuditData>, AuditRepository>();
         services.AddTransient<IEndpointRepository, EndpointsRepository>();
+        services.AddTransient<ICalculateMessageRate, StatisticsRepository>();
     }
 }
