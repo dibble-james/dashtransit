@@ -76,12 +76,12 @@ public class FaultRepository : RepositoryBase<DomainFault>
         return result.First();
     }
 
-    public async Task<List<DomainFault>> ListAsync(CancellationToken cancellationToken)
+    public async override Task<List<DomainFault>> ListAsync(CancellationToken cancellationToken)
     {
         return (await this.context.Set<Fault>().ToListAsync(cancellationToken)).Cast<DomainFault>().ToList();
     }
 
-    public async Task<DomainFault> AddAsync(DomainFault entity,
+    public async override Task<DomainFault> AddAsync(DomainFault entity,
         CancellationToken cancellationToken = new CancellationToken())
     {
         var fault = await this.context.Set<Fault>()
@@ -94,17 +94,17 @@ public class FaultRepository : RepositoryBase<DomainFault>
         return fault.Entity;
     }
 
-    public Task UpdateAsync(DomainFault entity, CancellationToken cancellationToken = new CancellationToken())
+    public override Task UpdateAsync(DomainFault entity, CancellationToken cancellationToken = new CancellationToken())
     {
         throw new System.NotImplementedException();
     }
 
-    public Task DeleteAsync(DomainFault entity, CancellationToken cancellationToken = new CancellationToken())
+    public override Task DeleteAsync(DomainFault entity, CancellationToken cancellationToken = new CancellationToken())
     {
         throw new System.NotImplementedException();
     }
 
-    public Task DeleteRangeAsync(IEnumerable<DomainFault> entities,
+    public override Task DeleteRangeAsync(IEnumerable<DomainFault> entities,
         CancellationToken cancellationToken = new CancellationToken())
     {
         throw new System.NotImplementedException();

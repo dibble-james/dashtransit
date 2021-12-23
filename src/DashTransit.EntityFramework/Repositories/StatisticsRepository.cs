@@ -35,6 +35,7 @@ public class StatisticsRepository : ICalculateMessageRate
     {
         var minDate = DateTime.Now.Add(-context);
 
+        // This doesn't work like I thought it did.  Sent time is always the time the original message was sent
         var average = await this.database.Audit
             .Where(x => x.SentTime.HasValue && x.SentTime >= minDate)
             .GroupBy(x => x.MessageId)
@@ -42,5 +43,31 @@ public class StatisticsRepository : ICalculateMessageRate
             .AverageAsync(x => EF.Functions.DateDiffMillisecond(x.Min, x.Max));
 
         return TimeSpan.FromMilliseconds(average.GetValueOrDefault());
+    }
+
+    public async Task<int> FaultCount(TimeSpan context)
+    {
+        var minDate = DateTime.Now.Add(-context);
+
+        var count = await this.database.Fault
+            .Where(x => x.Produced >= minDate)
+            .CountAsync();
+
+        return count;
+    }
+
+    public async Task<double> FailureRate(TimeSpan context)
+    {
+        var minDate = DateTime.Now.Add(-context);
+
+        var counts = await this.database.Fault.DefaultIfEmpty()
+            .Select(t => new
+            {
+                Faults = this.database.Fault.Count(f => f.Produced >= minDate),
+                Consumed = this.database.Audit.Count(c => c.ContextType == "Consume" && c.SentTime.HasValue && c.SentTime >= minDate)
+            })
+            .FirstAsync();
+
+        return counts.Consumed == 0 ? 0 : (double)counts.Faults / (double)counts.Consumed;
     }
 }

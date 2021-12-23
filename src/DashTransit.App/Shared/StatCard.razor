@@ -15,16 +15,17 @@
 }
 
 <FluentCard>
-    @if (Loading)
-    {
-        <FluentProgressRing/>
-    }
-    else
-    {
-        <div class="widget">
-            <span class="title">@Title</span>
+    <div class="widget">
+        <span class="title">@Title</span>
+        @if (Loading)
+        {
+            <FluentProgressRing/>
+        }
+        else
+        {
             <span class="stat">@Stat</span>
-            <span class="rate">@Rate</span>
-        </div>
-    }
+        }
+        <span class="rate">@Rate</span>
+    </div>
+
 </FluentCard>

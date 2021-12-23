@@ -1,0 +1,5 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@inject IState<FailureRateState> State
+@inject IDispatcher Dispatcher
+
+<StatCard Loading=@State.Value.Loading Title="Failure Rate" Rate="%" Stat=@State.Value.Rate.ToString("0.00") />

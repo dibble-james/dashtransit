@@ -5,6 +5,7 @@ using DashTransit.Core.Domain;
 using DashTransit.EntityFramework.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Fault = Entities.Fault;
 
 public class DashTransitContext : DbContext
 {
@@ -14,6 +15,8 @@ public class DashTransitContext : DbContext
     }
 
     public IQueryable<IRawAuditData> Audit => this.Set<RawAudit>();
+
+    public IQueryable<Fault> Fault => this.Set<Fault>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

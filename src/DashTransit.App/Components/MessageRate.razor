@@ -2,4 +2,4 @@
 @inject IState<MessageRateState> State
 @inject IDispatcher Dispatcher
 
-<StatCard Loading=@State.Value.Loading Title="Avg Messages Sent" Rate="msg/sec" Stat=@State.Value.Rate.ToString() />
+<StatCard Loading=@State.Value.Loading Title="Avg Messages Sent" Rate="msg/sec" Stat=@State.Value.Rate.ToString("0") />

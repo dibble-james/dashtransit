@@ -9,4 +9,8 @@ public interface ICalculateMessageRate
     Task<double> MessageRate(TimeSpan context);
 
     Task<TimeSpan> ProcessingRate(TimeSpan context);
+
+    Task<int> FaultCount(TimeSpan context);
+
+    Task<double> FailureRate(TimeSpan context);
 }
