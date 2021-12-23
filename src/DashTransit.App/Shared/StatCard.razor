@@ -1,4 +1,5 @@
 @code {
+
     [Parameter, EditorRequired]
     public string Title { get; init; }
 
@@ -10,17 +11,20 @@
 
     [Parameter, EditorRequired]
     public bool Loading { get; init; }
+
 }
 
 <FluentCard>
     @if (Loading)
     {
-        <FluentProgressRing />
+        <FluentProgressRing/>
     }
     else
     {
-        <span>@Title</span>
-        <span>@Stat</span>
-        <span>@Rate</span>
+        <div class="widget">
+            <span class="title">@Title</span>
+            <span class="stat">@Stat</span>
+            <span class="rate">@Rate</span>
+        </div>
     }
 </FluentCard>
