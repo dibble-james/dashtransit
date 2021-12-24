@@ -41,7 +41,7 @@ namespace FaultGenerator
                     });
 
                     services.AddMassTransitHostedService();
-                    services.AddHostedService<OrderPlacer>();
+                    ////services.AddHostedService<OrderPlacer>();
                 })
                 .RunConsoleAsync();
     }

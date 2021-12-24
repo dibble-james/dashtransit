@@ -12,13 +12,22 @@
 }
 
 <Loader IsLoading=@State.Value.Loading>
-    <div class="container">
-        @if (State.Value is null)
-        {
-            <p>Message not found</p>
-        }
-        else
-        {
+    @if (State.Value is null)
+    {
+        <p>Message not found</p>
+    }
+    else
+    {
+        <FluentToolbar>
+            <FluentButton
+                slot="end"
+                Appearance="Appearance.Accent"
+                disabled=@State.Value.Resending
+                @onclick="() => Dispatcher.Dispatch(new TriggerResend(AuditId.From(State.Value.Fault.Message.AuditRecordId), State.Value.Fault.ProducedBy))">
+                Resend
+            </FluentButton>
+        </FluentToolbar>
+        <div class="container">
             <div>
                 <h3>@State.Value.Fault!.Exceptions.First().Message</h3>
                 <dl>
@@ -32,6 +41,6 @@
                 </dl>
             </div>
             <pre>@State.Value.Fault.Exceptions.First().StackTrace</pre>
-        }
-    </div>
+        </div>
+    }
 </Loader>
