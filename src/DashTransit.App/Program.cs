@@ -18,7 +18,7 @@ builder.Services.AddMassTransit(bus =>
     bus.AddDashTransit();
     bus.UsingRabbitMq((context, rabbit) =>
     {
-        rabbit.Host("amqp://guest:guest@localhost:5672");
+        rabbit.Host(builder.Configuration.GetConnectionString("transport"));
         rabbit.UseDashTransit(context);
     });
 });
