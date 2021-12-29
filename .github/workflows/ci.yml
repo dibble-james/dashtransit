@@ -2,6 +2,7 @@ name: CI Build
 
 permissions:
   packages: write
+  contents: read
 
 on:
   workflow_dispatch:
