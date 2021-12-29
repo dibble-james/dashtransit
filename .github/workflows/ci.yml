@@ -13,14 +13,28 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - name: Git Version
+        id: version
+        uses: codacy/git-version@2.4.0
+        with:
+          release-branch: trunk
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io/dibble-james/dashtransit
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
           context: .
           file: src/DashTransit.App/Dockerfile
-          #push: true
-          tags: dashtransit:latest
+          push: true
+          tags: ghcr.io/dibble-james/dashtransit:${{ steps.version.outputs.VERSION }}
