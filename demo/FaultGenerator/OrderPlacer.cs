@@ -24,7 +24,7 @@ namespace FaultGenerator
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                await Task.Delay(random.Next(250, 5000), stoppingToken);
+                await Task.Delay(random.Next(50, 500), stoppingToken);
 
                 await this.bus.Publish(new PlaceOrder(Guid.NewGuid(), DateTimeOffset.Now, random.NextDouble() * random.Next(10, 500)));
             }

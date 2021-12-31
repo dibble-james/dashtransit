@@ -4,7 +4,7 @@
 
 namespace DashTransit.Core.Application.Queries;
 
-public record CalculateMessageRate : IRequest<double>
+public record CalculateMessageRate(EndpointId? Endpoint = default) : IRequest<double>
 {
     public class Handler : IRequestHandler<CalculateMessageRate, double>
     {
@@ -14,7 +14,7 @@ public record CalculateMessageRate : IRequest<double>
 
         public Task<double> Handle(CalculateMessageRate request, CancellationToken cancellationToken)
         {
-            return this._repository.MessageRate(TimeSpan.FromHours(1));
+            return this._repository.MessageRate(TimeSpan.FromHours(1), request.Endpoint);
         }
     }
 }

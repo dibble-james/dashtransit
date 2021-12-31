@@ -16,14 +16,21 @@ public class StatisticsRepository : ICalculateMessageRate
 
     public StatisticsRepository(DashTransitContext database) => this.database = database;
 
-    public async Task<double> MessageRate(TimeSpan context)
+    public async Task<double> MessageRate(TimeSpan context, EndpointId? endpoint)
     {
         var minDate = DateTime.Now.Add(-context);
 
-        var average = await this.database.Audit
+        var filter = this.database.Audit
             .Where(Message.IsProducerSpec)
-            .Where(x => x.SentTime.HasValue && x.SentTime >= minDate)
-            .GroupBy(x => new { x.SentTime.Value.Hour, x.SentTime.Value.Minute, x.SentTime.Value.Second })
+            .Where(x => x.SentTime.HasValue && x.SentTime >= minDate);
+
+        if (endpoint is not null)
+        {
+            filter = filter.Where(x => x.SourceAddress == endpoint.Value.ToString());
+        }
+
+        var average = await filter 
+            .GroupBy(x => new { x.SentTime!.Value.Hour, x.SentTime.Value.Minute, x.SentTime.Value.Second })
             .Select(x => x.Count())
             .DefaultIfEmpty()
             .AverageAsync();

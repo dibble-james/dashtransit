@@ -7,11 +7,7 @@
     <div class="container">
         @foreach (var endpoint in this.State.Value.Endpoints)
         {
-            <FluentCard>
-                <div>
-                    <h2>@endpoint</h2>
-                </div>
-            </FluentCard>
+            <DashTransit.App.Components.Endpoint EndpointId=@endpoint />
         }
     </div>
 </Loader>

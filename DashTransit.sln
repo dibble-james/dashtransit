@@ -1,16 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DashTransit.App", "src\DashTransit.App\DashTransit.App.csproj", "{463DB0BE-6C39-40F3-9725-368D522F83A8}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.31911.260
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DashTransit.App", "src\DashTransit.App\DashTransit.App.csproj", "{463DB0BE-6C39-40F3-9725-368D522F83A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DashTransit.Core", "src\DashTransit.Core\DashTransit.Core.csproj", "{5F8C5419-F6B1-40F9-A88B-36E49AE93675}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DashTransit.Core", "src\DashTransit.Core\DashTransit.Core.csproj", "{5F8C5419-F6B1-40F9-A88B-36E49AE93675}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DashTransit.EntityFramework", "src\DashTransit.EntityFramework\DashTransit.EntityFramework.csproj", "{E85AF2B9-876A-4DAB-8A35-394C67D0146E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DashTransit.EntityFramework", "src\DashTransit.EntityFramework\DashTransit.EntityFramework.csproj", "{E85AF2B9-876A-4DAB-8A35-394C67D0146E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DashTransit.Tests.Core", "src\DashTransit.Tests.Core\DashTransit.Tests.Core.csproj", "{85FA3B74-1F22-49A0-8EBC-A9E62E5AF315}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DashTransit.Tests.Core", "src\DashTransit.Tests.Core\DashTransit.Tests.Core.csproj", "{85FA3B74-1F22-49A0-8EBC-A9E62E5AF315}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demo", "demo", "{2A910796-BE95-43D4-9C0F-C2BD53A8EAD7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FaultGenerator", "demo\FaultGenerator\FaultGenerator.csproj", "{539CA55E-28EF-4120-A985-E5C424879D66}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FaultGenerator", "demo\FaultGenerator\FaultGenerator.csproj", "{539CA55E-28EF-4120-A985-E5C424879D66}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,7 +42,13 @@ Global
 		{539CA55E-28EF-4120-A985-E5C424879D66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{539CA55E-28EF-4120-A985-E5C424879D66}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{539CA55E-28EF-4120-A985-E5C424879D66} = {2A910796-BE95-43D4-9C0F-C2BD53A8EAD7}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1A2EA179-9B07-4CAB-823B-5F0C36C28A86}
 	EndGlobalSection
 EndGlobal

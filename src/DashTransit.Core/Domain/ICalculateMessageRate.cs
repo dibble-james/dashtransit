@@ -6,7 +6,7 @@ namespace DashTransit.Core.Domain;
 
 public interface ICalculateMessageRate
 {
-    Task<double> MessageRate(TimeSpan context);
+    Task<double> MessageRate(TimeSpan context, EndpointId? endpoint);
 
     Task<TimeSpan> ProcessingRate(TimeSpan context);
 

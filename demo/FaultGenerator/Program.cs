@@ -20,7 +20,6 @@ namespace FaultGenerator
                 .ConfigureLogging(logging => logging.SetMinimumLevel(LogLevel.Debug))
                 .ConfigureServices((host, services) =>
                 {
-
                     services.AddMassTransit(bus =>
                     {
                         bus.AddConsumer<BillingService>();
@@ -41,7 +40,7 @@ namespace FaultGenerator
                     });
 
                     services.AddMassTransitHostedService();
-                    ////services.AddHostedService<OrderPlacer>();
+                    services.AddHostedService<OrderPlacer>();
                 })
                 .RunConsoleAsync();
     }
