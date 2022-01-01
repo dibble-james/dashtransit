@@ -17,11 +17,21 @@ public partial class Endpoint
         this.Dispatcher.Dispatch(new Fetch(this.EndpointId!));
     }
 
-    [ReducerMethod(typeof(Fetch))]
-    public static EndpointState OnFetch(EndpointState state) => state with { Loading = true };
+    [ReducerMethod]
+    public static EndpointState OnFetch(EndpointState state, Fetch action)
+    {
+        var e = new Dictionary<EndpointId, (bool, double)>(state.Endpoints);
+        e[action.Endpoint] = (true, 0);
+        return state with { Endpoints = e };
+    }
 
     [ReducerMethod]
-    public static EndpointState OnFetched(EndpointState state, Fetched action) => state with { Loading = false, Rate = action.Rate };
+    public static EndpointState OnFetched(EndpointState state, Fetched action)
+    {
+        var e = new Dictionary<EndpointId, (bool, double)>(state.Endpoints);
+        e[action.Endpoint] = (false, action.Rate);
+        return state with { Endpoints = e };
+    }
 
     public class Handlers
     {
@@ -33,18 +43,21 @@ public partial class Endpoint
         public async Task HandleFetchConversationAction(Fetch action, IDispatcher dispatcher)
         {
             var rate = await this.mediator.Send(new CalculateMessageRate(action.Endpoint));
-            dispatcher.Dispatch(new Fetched(rate));
+            dispatcher.Dispatch(new Fetched(action.Endpoint, rate));
         }
     }
 
     [FeatureState]
     public record EndpointState
     {
-        public bool Loading { get; init; } = true;
-        public double Rate { get; init; }
+        public IReadOnlyDictionary<EndpointId, (bool Loading, double Rate)> Endpoints { get; init; } = new Dictionary<EndpointId, (bool Loading, double Rate)>();
+
+        public bool IsLoading(EndpointId endpoint) => this.Endpoints.TryGetValue(endpoint, out var val) ? val.Loading : false;
+
+        public double GetRate(EndpointId endpoint) => this.Endpoints.TryGetValue(endpoint, out var val) ? val.Rate : 0;
     }
 
     public record Fetch(EndpointId Endpoint);
 
-    public record Fetched(double Rate);
+    public record Fetched(EndpointId Endpoint, double Rate);
 }

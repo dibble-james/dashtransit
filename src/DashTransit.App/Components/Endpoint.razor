@@ -8,8 +8,5 @@
 }
 
 <FluentCard>
-    <div>
-        <h2>@EndpointId</h2>
-    </div>
-    <StatCard Loading=@State.Value.Loading Title="" Rate="msg/sec" Stat=@State.Value.Rate.ToString("0") />
+    <StatCard Loading=@State.Value.IsLoading(this.EndpointId!) Title=@EndpointId!.Value.ToString() Rate="msg/sec" Stat=@State.Value.GetRate(EndpointId!).ToString("0.00") />
 </FluentCard>
