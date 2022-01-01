@@ -1,35 +1,48 @@
-// <copyright file="Message.razor.cs" company="James Dibble">
-// Copyright (c) James Dibble. All rights reserved.
-// </copyright>
+namespace DashTransit.App.Pages;
 
-namespace DashTransit.App.Pages
+using Blazor.Diagrams.Core;
+using Blazor.Diagrams.Core.Models;
+using DashTransit.Core.Application.Queries;
+using DashTransit.Core.Domain;
+using Fluxor;
+using MediatR;
+
+public partial class Message
 {
-    using System;
-    using System.Threading.Tasks;
-    using DashTransit.Core.Application;
-    using DashTransit.Core.Domain;
-    using MediatR;
-    using Microsoft.AspNetCore.Components;
-    using Core = DashTransit.Core.Application;
-
-    public partial class Message
+    protected override void OnParametersSet()
     {
-        [Inject] private IMediator Mediator { get; init; }
+        base.OnParametersSet();
+        this.Dispatcher.Dispatch(new FetchData(Core.Domain.AuditId.From(this.AuditId)));
+    }
 
-        [Parameter]
-        public Guid MessageId { get; init; }
+    [ReducerMethod(typeof(FetchData))]
+    public static MessageState OnFetch(MessageState state) => state with { Loading = true };
 
-        private bool HasLoaded { get; set; }
+    [ReducerMethod]
+    public static MessageState OnFetched(MessageState state, Fetched action) => state with { Loading = false, Message = action.Message };
 
-        private Core.MessageDetailsResponse Response { get; set; }
+    [FeatureState]
+    public record MessageState
+    {
+        public bool Loading { get; init; } = true;
+        public IRawAuditData? Message { get; init; }
+    }
 
-        protected override async Task OnInitializedAsync()
+    public class Handlers
+    {
+        private readonly IMediator mediator;
+
+        public Handlers(IMediator mediator) => this.mediator = mediator;
+
+        [EffectMethod]
+        public async Task HandleFetchDataAction(FetchData action, IDispatcher dispatcher)
         {
-            var response = await this.Mediator.Send(new MessageDetails(new MessageId(this.MessageId)));
-            this.Response = response.Match(x => x, _ => null);
-
-            this.HasLoaded = true;
-            this.StateHasChanged();
+            var message = await this.mediator.Send(new MessageByAuditId(action.AuditId));
+            dispatcher.Dispatch(new Fetched(message));
         }
     }
+
+    public record FetchData(AuditId AuditId);
+
+    public record Fetched(IRawAuditData? Message);
 }

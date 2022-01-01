@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FaultGenerator": {
+      "commandName": "Project",
+      "commandLineArgs": ""
+    }
+  }
+}

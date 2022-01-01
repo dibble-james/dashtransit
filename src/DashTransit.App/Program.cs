@@ -1,16 +1,60 @@
-// <copyright file="Program.cs" company="James Dibble">
-// Copyright (c) James Dibble. All rights reserved.
-// </copyright>
+using DashTransit.Core;
+using DashTransit.EntityFramework;
+using Fluxor;
+using MassTransit;
+using Microsoft.EntityFrameworkCore;
 
-using System;
-using System.Linq;
-using DashTransit.App;
-using DashTransit.Core.Infrastructure;
+var builder = WebApplication.CreateBuilder(args);
 
-var task = args.FirstOrDefault() switch
+// Add services to the container.
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
+builder.Services.AddFluxor(opt => opt.ScanAssemblies(typeof(Program).Assembly));
+
+builder.Services.AddDashTransit();
+builder.Services.UseDashTransitEntityFramework(builder.Configuration.GetValue<string>("store:connection"));
+builder.Services.AddMassTransitHostedService();
+builder.Services.AddMassTransit(bus =>
 {
-    "migrate" => Migrator.Migrate(Console.Out, Console.Error),
-    _ => WebApp.Run,
-};
+    bus.AddDashTransit();
+    bus.UsingRabbitMq((context, rabbit) =>
+    {
+        rabbit.Host(builder.Configuration.GetValue<string>("transport:connection"));
+        rabbit.UseDashTransit(context);
+    });
+});
 
-task(args);
+var app = builder.Build();
+
+if (args.FirstOrDefault()?.Equals("migrate", StringComparison.InvariantCultureIgnoreCase) == true)
+{
+    using var scope = app.Services.CreateScope();
+    var database = scope.ServiceProvider.GetRequiredService<DashTransitContext>().Database;
+    Console.Out.WriteLine($"Applying migrations for DashTransit");
+    try
+    {
+        database.Migrate();
+        Console.Out.WriteLine("Migrations applied successfully");
+    }
+    catch (Exception ex)
+    {
+        Console.Error.WriteLine($"Appliying migrations failed:\r\n{ex.Message}");
+    }
+    return;
+}
+
+
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error");
+}
+
+app.UseStaticFiles();
+
+app.UseRouting();
+
+app.MapBlazorHub();
+app.MapFallbackToPage("/_Host");
+
+app.Run();

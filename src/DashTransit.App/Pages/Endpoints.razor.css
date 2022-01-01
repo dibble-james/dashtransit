@@ -1,0 +1,11 @@
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 1rem;
+    padding: 1rem;
+}
+
+::deep fluent-card div {
+    padding: 0 1rem;
+    word-break: break-all;
+}

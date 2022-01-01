@@ -1,50 +1,18 @@
-// <copyright file="Message.cs" company="James Dibble">
-// Copyright (c) James Dibble. All rights reserved.
-// </copyright>
+namespace DashTransit.Core.Domain;
 
-namespace DashTransit.Core.Domain
+using System;
+using System.Linq.Expressions;
+using ValueOf;
+
+public class MessageId : ValueOf<Guid, MessageId> {}
+
+public class Message
 {
-    using System;
-    using DashTransit.Core.Domain.Common;
+    public static Expression<Func<IRawAuditData, bool>> IsProducerSpec =>
+        message => new[] {"Publish", "Send"}.Contains(message.ContextType);
 
-    public record MessageId : GuidIdentity<MessageId>
-    {
-        public MessageId(Guid Id)
-            : base(Id)
-        {
-        }
-    }
-
-    public record CorrelationId : GuidIdentity<CorrelationId>
-    {
-        public CorrelationId(Guid Id)
-            : base(Id)
-        {
-        }
-    }
-
-    public class Message : Aggregate<MessageId>
-    {
-        private readonly CorrelationId correlationId;
-        private readonly DateTimeOffset timestamp;
-        private readonly string content;
-        private readonly string type;
-
-        public Message(MessageId id, CorrelationId correlationId, DateTimeOffset timestamp, string content, string type)
-            : base(id)
-        {
-            this.correlationId = correlationId;
-            this.timestamp = timestamp;
-            this.content = content;
-            this.type = type;
-        }
-
-        public CorrelationId CorrelationId => this.correlationId;
-
-        public DateTimeOffset Timestamp => this.timestamp;
-
-        public string Content => this.content;
-
-        public string Type => this.type;
-    }
+    public static Func<IRawAuditData, bool> IsProducer =>
+        message => new[] {"Publish", "Send"}.Contains(message.ContextType);
 }
+
+public class AuditId : ValueOf<int, AuditId> {}

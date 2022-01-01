@@ -1,4 +1,7 @@
-@using System.Net.Http
+﻿@using System.Net.Http
+@using Blazor.Diagrams.Core;
+@using Blazor.Diagrams.Core.Models;
+@using Blazor.Diagrams.Components;
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.Forms
@@ -6,7 +9,10 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using Microsoft.JSInterop
-@using MudBlazor
 @using DashTransit.App
-@using DashTransit.App.Components
-@using DCore = DashTransit.Core.Application 
+@using DashTransit.App.Shared
+@using DashTransit.Core.Application.Queries
+@using DashTransit.Core.Domain
+@using Microsoft.Fast.Components.FluentUI
+@using Fluxor
+@using MediatR

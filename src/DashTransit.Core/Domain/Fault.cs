@@ -2,32 +2,40 @@
 // Copyright (c) James Dibble. All rights reserved.
 // </copyright>
 
-namespace DashTransit.Core.Domain
+namespace DashTransit.Core.Domain;
+
+public class FaultId : ValueOf<int, FaultId>
 {
-    using System;
+}
 
-    public class Fault : Message
+public class Fault
+{
+    protected Fault(FaultId id, MessageId messageId, IEnumerable<ExceptionInfo> exceptions, DateTime produced,
+        EndpointId producedBy)
+        : this(messageId, exceptions, produced, producedBy)
     {
-        private readonly string exception;
-        private readonly string stackTrace;
-        private readonly string exceptionType;
-        private readonly string source;
-
-        public Fault(MessageId id, CorrelationId correlationId, DateTimeOffset timestamp, string content, string type, string exception, string stackTrace, string exceptionType, string source)
-            : base(id, correlationId, timestamp, content, type)
-        {
-            this.exception = exception;
-            this.stackTrace = stackTrace;
-            this.exceptionType = exceptionType;
-            this.source = source;
-        }
-
-        public string Exception => this.exception;
-
-        public string StackTrace => this.stackTrace;
-
-        public string ExceptionType => this.exceptionType;
-
-        public string Source => this.source;
+        this.Id = id;
     }
+
+    public Fault(MessageId messageId, IEnumerable<ExceptionInfo> exceptions, DateTime produced, EndpointId producedBy)
+    {
+        this.MessageId = messageId;
+        this.Exceptions = exceptions;
+        this.Produced = produced;
+        this.ProducedBy = producedBy;
+    }
+
+    public FaultId Id { get; } = null!;
+
+    public virtual MessageId MessageId { get; }
+
+    public virtual IEnumerable<ExceptionInfo> Exceptions { get; }
+
+    public DateTime Produced { get; }
+
+    public EndpointId ProducedBy { get; }
+
+    public virtual IReadOnlyCollection<IRawAuditData> Messages { get; } = new List<IRawAuditData>();
+
+    public IRawAuditData? Message => this.Messages.FirstOrDefault(Core.Domain.Message.IsProducer);
 }

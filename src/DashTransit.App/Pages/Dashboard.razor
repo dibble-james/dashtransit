@@ -1,1 +1,13 @@
 @page "/"
+@using DashTransit.App.Components
+
+<PageTitle>DashTransit</PageTitle>
+
+<div class="container">
+    <div class="widgets">
+        <MessageRate/>
+        <FaultCount />
+        <FailureRate />
+        @* <ProcessingRate/> *@
+    </div>
+</div>

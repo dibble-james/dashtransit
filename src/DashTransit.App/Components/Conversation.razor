@@ -1,0 +1,37 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@inject IDispatcher Dispatcher
+@inject IState<ConversationState> State
+
+@code {
+    [Parameter, EditorRequired]
+    public Guid ConversationId { get; set; }
+}
+
+<FluentAccordion>
+    <FluentAccordionItem @onclick=@LoadConversation>
+        <div slot="heading">Conversation</div>
+        <Loader IsLoading=@State.Value.Loading>
+            <FluentDataGrid ColumnDefinitions=Columns RowsData=@State.Value.Conversation GridTemplateColumns="9rem 1fr 6rem">
+                <RowItemTemplate>
+                    <FluentDataGridRow TItem=IRawAuditData>
+                        <FluentDataGridCell GridColumn=1>@context.SentTime</FluentDataGridCell>
+                        <FluentDataGridCell GridColumn=2>@context.MessageType</FluentDataGridCell>
+                        <FluentDataGridCell GridColumn=3>
+                            <FluentAnchor href=@($"message/{context.AuditRecordId}")>Details</FluentAnchor>
+                        </FluentDataGridCell>
+                    </FluentDataGridRow>
+                </RowItemTemplate>
+            </FluentDataGrid>
+        </Loader>
+    </FluentAccordionItem>
+</FluentAccordion>
+
+
+@code {
+    private readonly List<ColumnDefinition<IRawAuditData>> Columns = new List<ColumnDefinition<IRawAuditData>>
+    {
+        new ColumnDefinition<IRawAuditData>("Sent", x => x.SentTime),
+        new ColumnDefinition<IRawAuditData>("Type", x => x.MessageType),
+        new ColumnDefinition<IRawAuditData>("", x => x),
+    };
+}

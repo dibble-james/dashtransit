@@ -5,9 +5,7 @@
 namespace DashTransit.Core
 {
     using System;
-    using DashTransit.Core.Application;
-    using DashTransit.Core.Domain.Common;
-    using DashTransit.Core.Infrastructure;
+    using Application.Commands;
     using GreenPipes;
     using MassTransit;
     using MassTransit.ExtensionsDependencyInjectionIntegration;
@@ -16,15 +14,9 @@ namespace DashTransit.Core
 
     public static class Bootstrap
     {
-        public static void AddDashTransit(this IServiceCollection services, string storageConnectionString)
+        public static void AddDashTransit(this IServiceCollection services)
         {
-            services.AddMediatR(typeof(Hook).Assembly);
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped(DbConnectionFactory.Open(storageConnectionString));
-            services.Scan(scanner => scanner.FromAssemblyOf<Hook>()
-                .AddClasses(c => c.InNamespaces("DashTransit.Core.Infrastructure", "DashTransit.Core.Domain.Services"))
-                .AsSelf()
-                .AsImplementedInterfaces());
+            services.AddMediatR(typeof(Hook));
         }
 
         public static void AddDashTransit(this IServiceCollectionBusConfigurator bus)
@@ -36,10 +28,8 @@ namespace DashTransit.Core
         {
             bus.ReceiveEndpoint("dashtransit-faults", endpoint =>
             {
-                endpoint.UseInMemoryOutbox();
-                endpoint.UseMessageRetry(retry => retry.Incremental(5, TimeSpan.FromSeconds(0.1), TimeSpan.FromMilliseconds(0.5)));
-                endpoint.ConfigureConsumer<FaultHandler>(context);
-                endpoint.UseConsumeFilter(typeof(TransactionFilter<>), context);
+                endpoint.ConfigureConsumer<RegisterFault.Consumer>(context);
+                endpoint.UseMessageRetry(retry => retry.Incremental(5, TimeSpan.FromSeconds(0.1), TimeSpan.FromSeconds(0.5)));
             });
         }
     }

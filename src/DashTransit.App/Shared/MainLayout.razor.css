@@ -1,0 +1,35 @@
+
+main {
+    position: absolute;
+    min-width: 100%;
+    min-height: 100%;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas: "navigation content";
+}
+
+main nav {
+    grid-area: navigation;
+    background-color: var(--neutral-layer-floating);
+    color: var(--neutral-foreground-rest);
+    display: flex;
+    flex-direction: column;
+}
+
+main nav h1 {
+    padding: 0 1rem;
+}
+
+main aside ::deep fluent-anchor {
+    width: 100%;
+}
+
+main article {
+    grid-area: content;
+    --elevation: 2;
+    background-color: var(--fill-color);
+    color: var(--neutral-foreground-rest);
+    padding: 1rem 0;
+}

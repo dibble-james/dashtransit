@@ -1,34 +1,50 @@
-@page "/message/{messageId:guid}"
+@page "/message/{AuditId:int}"
+@using Newtonsoft.Json
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@inject IDispatcher Dispatcher
+@inject IState<MessageState> State
+@using DashTransit.App.Components
 
-@if (!this.HasLoaded)
-{
-    <MudSkeleton Animation="Animation.Wave" />
+
+@code {
+
+    [Parameter]
+    public int AuditId { get; set; }
+
 }
-else if (this.Response is null)
-{
-    <H5>Message Not Found</H5>
-}
-else
-{
-    <MudGrid Class="mt-1 mud-width-full">
-        <MudItem xs="12">
-            <H5>@this.Response.Id.Id</H5>
-        </MudItem>
-        <MudItem md="6">
-            <DL>
-                <dt>Timestamp</dt>
-                <dd>@this.Response.Timestamp</dd>
-                <dt>Message Type</dt>
-                <dd>@this.Response.MessageType</dd>
-                <dt>Source</dt>
-                <dd>@this.Response.Source</dd>
-                <dt>Destination</dt>
-                <dd>@this.Response.Destination</dd>
-            </DL>
-            <LinkButton Class="ma-1" Link=@($"/message/conversation/{this.Response.ConversationId.Id}")>View Conversation</LinkButton>
-        </MudItem>
-        <MudItem md="6">
-            <Code Content=@Response.Content />
-        </MudItem>
-    </MudGrid>
-}
+
+<Loader IsLoading=@State.Value.Loading>
+    @if (State.Value.Message is null)
+    {
+        <p>Message not found</p>
+    }
+    else
+    {
+        <div class="container">
+            <div>
+                <h3>Message Properties</h3>
+                <dl>
+                    <DL T="Message Id" D=@(State.Value.Message!.MessageId)/>
+                    <DL T="Message Type" D=@(State.Value.Message!.MessageType)/>
+                    <DL T="Correlation Id" D=@(State.Value.Message!.CorrelationId)/>
+                    <DL T="Conversation Id" D=@(State.Value.Message!.ConversationId)/>
+                    <DL T="Sender" D=@(State.Value.Message!.SourceAddress)/>
+                </dl>
+            </div>
+            <pre>@JsonConvert.SerializeObject(State.Value.Message!.Message, Formatting.Indented)</pre>
+            <div>
+                <h3>Headers</h3>
+                <dl>
+                    @foreach (var header in State.Value.Message.Headers)
+                    {
+                        <DL T=@header.Key D=@header.Value/>
+                    }
+                </dl>
+            </div>
+        </div>
+        <div class="accordions">
+            <Actors MessageId="State.Value.Message!.MessageId"/>
+            <Conversation ConversationId="State.Value.Message!.ConversationId.Value"/>
+        </div>
+    }
+</Loader>

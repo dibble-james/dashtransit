@@ -1,0 +1,21 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@inject IDispatcher Dispatcher
+@inject IState<ActorState> State
+
+@code {
+    [Parameter, EditorRequired]
+    public MessageId MessageId { get; set; }
+}
+
+<FluentAccordion>
+    <FluentAccordionItem @onclick=@LoadActors>
+        <div slot="heading">Actors</div>
+        <Loader IsLoading=@State.Value.Loading>
+            <div style="height: 25vh">
+                <CascadingValue Value="State.Value.Actors">
+                    <DiagramCanvas></DiagramCanvas>
+                </CascadingValue>
+            </div>
+        </Loader>
+    </FluentAccordionItem>
+</FluentAccordion>
