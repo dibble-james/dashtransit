@@ -81,7 +81,7 @@ jobs:
           tags: ${{ needs.linux.outputs.tags }}
           labels: ${{ needs.linux.outputs.labels }}
         run: |
-          $tags = "--tag $(($env:tags | Import-Csv) -join ' --tag ')"
-          $labels = "--label $(($env:labels | Import-Csv) -join ' --label ')"
+          $tags = "--tag $($env:tags -join ' --tag ')"
+          $labels = "--label $($env:labels -join ' --label ')"
           $cmd = "docker build -f src/DashTransit.App/Dockerfile $tags $labels ."
           echo $cmd
