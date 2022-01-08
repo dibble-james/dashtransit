@@ -43,14 +43,14 @@ jobs:
             type=ref,event=tag
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-      - name: Build and push
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: src/DashTransit.App/Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+      # - name: Build and push
+      #   uses: docker/build-push-action@v2
+      #   with:
+      #     context: .
+      #     file: src/DashTransit.App/Dockerfile
+      #     push: true
+      #     tags: ${{ steps.meta.outputs.tags }}
+      #     labels: ${{ steps.meta.outputs.labels }}
     outputs:
       tags: ${{ steps.meta.outputs.tags }}
       labels: ${{ steps.meta.outputs.labels }}
@@ -64,11 +64,9 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: src/DashTransit.App/Dockerfile
-          push: true
+      - name: Build
+        shell: pwsh
+        env:
           tags: ${{ needs.linux.outputs.tags }}
           labels: ${{ needs.linux.outputs.labels }}
+        run: echo ${env:tags}
