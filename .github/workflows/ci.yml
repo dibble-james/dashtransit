@@ -69,4 +69,4 @@ jobs:
         env:
           tags: ${{ needs.linux.outputs.tags }}
           labels: ${{ needs.linux.outputs.labels }}
-        run: echo ${env:tags}
+          run: echo "docker build -f src/DashTransit.App/Dockerfile --tag $($env:tags -split "`n" -join " --tag ") --label $($env:labels -split "`n" -join " --label ") ."
