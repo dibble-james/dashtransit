@@ -70,7 +70,7 @@ jobs:
           tags: ${{ needs.linux.outputs.tags }}
           labels: ${{ needs.linux.outputs.labels }}
         run: |
-          $tags = "--tag $($env:tags -split [Environment]::NewLine -join ' --tag ')"
+          $tags = "--tag $($env:tags -split [Environment]::NewLine -join '-windows --tag ')"
           $labels = "--label $($env:labels -split [Environment]::NewLine -join ' --label ')"
           $cmd = "docker build -f src/DashTransit.App/Dockerfile $tags $labels ."
           echo $cmd
