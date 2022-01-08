@@ -51,9 +51,20 @@ jobs:
       #     push: true
       #     tags: ${{ steps.meta.outputs.tags }}
       #     labels: ${{ steps.meta.outputs.labels }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta-windows
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-windows
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=ref,event=tag
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
     outputs:
-      tags: ${{ steps.meta.outputs.tags }}
-      labels: ${{ steps.meta.outputs.labels }}
+      tags: ${{ steps.meta-windows.outputs.tags }}
+      labels: ${{ steps.meta-windows.outputs.labels }}
   windows:
     runs-on: windows-latest
     needs: linux
@@ -70,7 +81,7 @@ jobs:
           tags: ${{ needs.linux.outputs.tags }}
           labels: ${{ needs.linux.outputs.labels }}
         run: |
-          $tags = "--tag $($env:tags -split [Environment]::NewLine -join '-windows --tag ')"
-          $labels = "--label $($env:labels -split [Environment]::NewLine -join ' --label ')"
+          $tags = "--tag $($env:tags | Import-Csv -join ' --tag ')"
+          $labels = "--label $($env:labels | Import-Csv -join ' --label ')"
           $cmd = "docker build -f src/DashTransit.App/Dockerfile $tags $labels ."
           echo $cmd
