@@ -32,7 +32,7 @@ More to follow but for now we support:
 
 ## Getting started
 
-DashTransit is distributed as a Docker container.
+DashTransit is distributed as a Docker container. Both Linux and Windows containers are supported.
 
 You can create the tables DashTransit requires by migrating using:
 
