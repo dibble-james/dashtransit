@@ -100,7 +100,7 @@ jobs:
           $cmd = "docker build -f src/DashTransit.App/Dockerfile $tags $labels ."
           echo $cmd
           iex $cmd
-          docker push -a "$($env.REGISTRY)/$($env.IMAGE_NAME)-windows"
+          docker push -a "$($env:REGISTRY)/$($env:IMAGE_NAME)-windows"
       - name: Create manifest
         shell: pwsh
         env:
