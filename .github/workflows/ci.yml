@@ -82,7 +82,7 @@ jobs:
         run: |
           $meta = ConvertFrom-Json $env:meta
           $tags = $meta.tags | foreach {"--tag {0}" -f $_}
-          $labels = $meta.labels.psobject.Properties | foreach {"--label {0}={1}" -f $_.Name,$_.Value}
+          $labels = $meta.labels.psobject.Properties |? { $_.Value -ne '' } | foreach {"--label {0}={1}" -f $_.Name,$_.Value}
           $cmd = "docker build -f src/DashTransit.App/Dockerfile $tags $labels ."
           echo $cmd
           iex $cmd
