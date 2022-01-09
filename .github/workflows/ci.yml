@@ -104,7 +104,7 @@ jobs:
       - name: Create manifest
         shell: pwsh
         env:
-          meta: ${{ needs.linux.outputs.meta }}
+          meta: ${{ needs.linux.outputs.meta-manifest }}
         run: |
           $meta = ConvertFrom-Json $env:meta
           $manifests = $meta.tags |% {"docker manifest create {0} {1} {2}; docker manifest push {0}" -f $_,($_ -replace "dashtransit","dashtransit-linux"),($_ -replace "dashtransit","dashtransit-windows")}
