@@ -43,14 +43,25 @@ jobs:
             type=ref,event=tag
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-      # - name: Build and push
-      #   uses: docker/build-push-action@v2
-      #   with:
-      #     context: .
-      #     file: src/DashTransit.App/Dockerfile
-      #     push: true
-      #     tags: ${{ steps.meta.outputs.tags }}
-      #     labels: ${{ steps.meta.outputs.labels }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta-linux
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-linux
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=ref,event=tag
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: src/DashTransit.App/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
       - name: Extract metadata (tags, labels) for Docker
         id: meta-windows
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
@@ -63,12 +74,15 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
     outputs:
+      meta-manifest: ${{ steps.meta.outputs.json }}
       meta-windows: ${{ steps.meta-windows.outputs.json }}
-      meta-linux: ${{ steps.meta.outputs.json }}
+      meta-linux: ${{ steps.meta-linux.outputs.json }}
   windows:
     runs-on: windows-latest
     needs: linux
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Log in to the Container registry
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
@@ -87,3 +101,11 @@ jobs:
           echo $cmd
           iex $cmd
           docker push -a $env:REGISTRY
+      - name: Create manifest
+        shell: pwsh
+        env:
+          meta: ${{ needs.linux.outputs.meta }}
+        run: |
+          $meta = ConvertFrom-Json $env:meta
+          $manifests = $meta.tags |% {"docker manifest create {0} {1} {2}; docker manifest push {0}" -f $_,($_ -replace "dashtransit","dashtransit-linux"),($_ -replace "dashtransit","dashtransit-windows")}
+          $manifests |% { iex $_ }
