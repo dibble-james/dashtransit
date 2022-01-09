@@ -63,8 +63,8 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
     outputs:
-      tags: ${{ steps.meta-windows.outputs.tags }}
-      labels: ${{ steps.meta-windows.outputs.labels }}
+      meta-windows: ${{ steps.meta-windows.outputs.json }}
+      meta-linux: ${{ steps.meta.outputs.json }}
   windows:
     runs-on: windows-latest
     needs: linux
@@ -78,10 +78,12 @@ jobs:
       - name: Build
         shell: pwsh
         env:
-          tags: ${{ needs.linux.outputs.tags }}
-          labels: ${{ needs.linux.outputs.labels }}
+          meta: ${{ needs.linux.outputs.meta-windows }}
         run: |
-          $tags = "--tag $($env:tags -split '`r`n' -join ' --tag ')"
-          $labels = "--label $($env:labels -split '`r`n' -join ' --label ')"
+          $meta = Convert-FromJson $env:meta
+          $tags = $meta.tags | foreach {"--tag {0}" -f $_}
+          $labels = $meta.labels.psobject.Properties | foreach {"--label {0}={1}" -f $_.Name,$_.Value}
           $cmd = "docker build -f src/DashTransit.App/Dockerfile $tags $labels ."
           echo $cmd
+          iex $cmd
+          docker push -a $env:REGISTRY
