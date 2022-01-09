@@ -36,17 +36,6 @@ jobs:
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=ref,event=tag
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta-linux
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-        with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-linux
           tags: |
             type=ref,event=branch
@@ -62,7 +51,18 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-      - name: Extract metadata (tags, labels) for Docker
+      - name: Extract metadata (tags, labels) for Docker manifest
+        id: meta-manifest
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=ref,event=tag
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+      - name: Extract metadata (tags, labels) for Docker Windows
         id: meta-windows
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
@@ -74,9 +74,9 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
     outputs:
-      meta-manifest: ${{ steps.meta.outputs.json }}
+      meta-manifest: ${{ steps.meta-manifest.outputs.json }}
       meta-windows: ${{ steps.meta-windows.outputs.json }}
-      meta-linux: ${{ steps.meta-linux.outputs.json }}
+      meta-linux: ${{ steps.meta.outputs.json }}
   windows:
     runs-on: windows-latest
     needs: linux
@@ -100,7 +100,7 @@ jobs:
           $cmd = "docker build -f src/DashTransit.App/Dockerfile $tags $labels ."
           echo $cmd
           iex $cmd
-          docker push -a $env:REGISTRY
+          docker push -a "$($env.REGISTRY)/$($env.IMAGE_NAME)-windows"
       - name: Create manifest
         shell: pwsh
         env:
