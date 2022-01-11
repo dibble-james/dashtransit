@@ -1,0 +1,9 @@
+div {
+    display: flex;
+    justify-content: center;
+    margin: 1rem;
+}
+
+div span {
+    padding: 0.5rem 1rem;
+}
