@@ -1,0 +1,17 @@
+@code {
+    [Parameter, EditorRequired]
+    public int Page { get; set; }
+
+    [Parameter, EditorRequired]
+    public Action<int> OnPageChange { get; set; } = _ => { };
+
+    public void OnNext() => OnPageChange(Page + 1);
+
+    public void OnPrevious() => OnPageChange(Math.Max(1, Page - 1));
+}
+
+<div>
+    <FluentFlipper Direction="Direction.Previous" @onclick=OnPrevious />
+    <span>@Page</span>
+    <FluentFlipper @onclick=OnNext />
+</div>

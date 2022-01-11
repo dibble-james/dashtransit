@@ -4,6 +4,12 @@ Gain an insight into your MassTransit installation
 
 [![CI Build](https://github.com/dibble-james/dashtransit/actions/workflows/ci.yml/badge.svg?branch=trunk)](https://github.com/dibble-james/dashtransit/actions/workflows/ci.yml)
 
+![image](https://user-images.githubusercontent.com/11923585/149025625-29cadb55-cade-4b02-89cc-3095e605f93d.png)
+
+![image](https://user-images.githubusercontent.com/11923585/149025720-f2c847ca-520a-41ac-b270-7f7a9a0095c1.png)
+
+![image](https://user-images.githubusercontent.com/11923585/149025825-11539fe3-1a9b-45ad-ac0c-d5478e12d3e9.png)
+
 ## Features
 
 - View your audit logs

@@ -22,6 +22,7 @@
         </RowItemTemplate>
     </FluentDataGrid>
 </Loader>
+<Pagination Page=State.Value.Page OnPageChange=@(page => Dispatcher.Dispatch(new FetchData(page))) />
 
 
 @code {

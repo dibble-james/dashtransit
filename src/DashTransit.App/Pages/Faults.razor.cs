@@ -12,8 +12,8 @@ public partial class Faults
         this.Dispatcher.Dispatch(new FetchData());
     }
 
-    [ReducerMethod(typeof(FetchData))]
-    public static FaultsState OnFetch(FaultsState state) => state with { Loading = true };
+    [ReducerMethod]
+    public static FaultsState OnFetch(FaultsState state, FetchData action) => state with { Loading = true, Page = action.Page };
 
     [ReducerMethod]
     public static FaultsState OnFetched(FaultsState state, Fetched action) => state with { Loading = false, Faults = action.Faults.ToList() };
@@ -23,6 +23,7 @@ public partial class Faults
     {
         public bool Loading { get; init; } = true;
         public List<LatestFault> Faults { get; init; } = new List<LatestFault>();
+        public int Page { get; init; } = 1;
     }
 
     public class Handlers
@@ -34,15 +35,15 @@ public partial class Faults
             this.mediator = mediator;
         }
 
-        [EffectMethod(typeof(FetchData))]
-        public async Task HandleFetchDataAction(IDispatcher dispatcher)
+        [EffectMethod]
+        public async Task HandleFetchDataAction(FetchData action, IDispatcher dispatcher)
         {
-            var messages = await this.mediator.Send(new LatestFaultsQuery());
+            var messages = await this.mediator.Send(new LatestFaultsQuery(action.Page));
             dispatcher.Dispatch(new Fetched(messages));
         }
     }
 
-    public record FetchData();
+    public record FetchData(int Page = 1);
 
     public record Fetched(IEnumerable<LatestFault> Faults);
 }

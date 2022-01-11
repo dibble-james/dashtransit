@@ -10,7 +10,7 @@ using MediatR;
 
 public record LatestFault(FaultId Id, string? Exception, DateTime Produced, EndpointId ProducedBy, MessageType Type);
 
-public class LatestFaultsQuery : IRequest<IEnumerable<LatestFault>>
+public record LatestFaultsQuery(int Page = 1) : IRequest<IEnumerable<LatestFault>>
 {
     public class Handler : IRequestHandler<LatestFaultsQuery, IEnumerable<LatestFault>>
     {
@@ -20,16 +20,17 @@ public class LatestFaultsQuery : IRequest<IEnumerable<LatestFault>>
 
         public async Task<IEnumerable<LatestFault>> Handle(LatestFaultsQuery request, CancellationToken cancellationToken)
         {
-            var faults = await this.database.ListAsync(new Query(), cancellationToken);
+            var faults = await this.database.ListAsync(new Query(request.Page), cancellationToken);
             return faults.Select(x => new LatestFault(x.Id, x.Exceptions.FirstOrDefault()?.Message, x.Produced, x.ProducedBy,
                 MessageType.From(x.Message?.MessageType ?? "Unknown")));
         }
 
         public class Query : Specification<Fault>
         {
-            public Query()
+            public Query(int page = 1)
             {
-                this.Query.Take(50);
+                this.Query.Skip((page - 1) * 25);
+                this.Query.Take(25);
                 this.Query.OrderByDescending(x => x.Produced);
             }
         }
