@@ -23,7 +23,7 @@
                 slot="end"
                 Appearance="Appearance.Accent"
                 disabled=@State.Value.Resending
-                @onclick="() => Dispatcher.Dispatch(new TriggerResend(AuditId.From(State.Value.Fault.Message.AuditRecordId), State.Value.Fault.ProducedBy))">
+                @onclick="() => Dispatcher.Dispatch(new TriggerResend(AuditId.From(State.Value.Fault!.Message!.AuditRecordId), State.Value.Fault.ProducedBy))">
                 Resend
             </FluentButton>
         </FluentToolbar>

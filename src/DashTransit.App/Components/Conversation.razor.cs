@@ -40,7 +40,7 @@ public partial class Conversation
     public record ConversationState
     {
         public bool Loading { get; init; } = true;
-        public List<IRawAuditData> Conversation { get; init; }
+        public List<IRawAuditData> Conversation { get; init; } = new List<IRawAuditData>();
     }
 
     public record Fetch(Guid Id);

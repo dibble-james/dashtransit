@@ -15,7 +15,7 @@ public partial class Actors
 {
     private void LoadActors()
     {
-        this.Dispatcher.Dispatch(new Fetch(this.MessageId));
+        this.Dispatcher.Dispatch(new Fetch(this.MessageId!));
     }
 
     [ReducerMethod(typeof(Fetch))]

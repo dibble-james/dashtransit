@@ -31,7 +31,7 @@
         new ColumnDefinition<LatestFault>("Produced", x => x.Produced),
         new ColumnDefinition<LatestFault>("Produced By", x => x.ProducedBy),
         new ColumnDefinition<LatestFault>("Type", x => x.Type),
-        new ColumnDefinition<LatestFault>("Exception", x => x.Exception),
+        new ColumnDefinition<LatestFault>("Exception", x => x.Exception ?? string.Empty),
         new ColumnDefinition<LatestFault>("", x => x),
     };
 }

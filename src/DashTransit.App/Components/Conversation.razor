@@ -30,7 +30,7 @@
 @code {
     private readonly List<ColumnDefinition<IRawAuditData>> Columns = new List<ColumnDefinition<IRawAuditData>>
     {
-        new ColumnDefinition<IRawAuditData>("Sent", x => x.SentTime),
+        new ColumnDefinition<IRawAuditData>("Sent", x => x.SentTime.GetValueOrDefault()),
         new ColumnDefinition<IRawAuditData>("Type", x => x.MessageType),
         new ColumnDefinition<IRawAuditData>("", x => x),
     };
