@@ -3,26 +3,31 @@
 @inject IDispatcher Dispatcher
 @inject IState<MessagesState> State
 
-<FluentToolbar>
-    <FluentButton Appearance="@Appearance.Accent" @onclick=@(() => Dispatcher.Dispatch(new FetchData()))><FluentIcon Name="Refresh" /></FluentButton>
+<FluentToolbar style="width: 100%">
+    <FluentButton slot="start" Appearance="@Appearance.Accent" @onclick=@(() => Dispatcher.Dispatch(new FetchData()))><FluentIcon Name="Refresh" /></FluentButton>
+    <div slot="end">
+        <Pagination Page=State.Value.Page OnPageChange=@(page => Dispatcher.Dispatch(new FetchData(page))) />
+    </div>
 </FluentToolbar>
 
-<Loader IsLoading="@State.Value.Loading">
-    <FluentDataGrid ColumnDefinitions=Columns RowsData=@State.Value.Messages GridTemplateColumns="9rem 1fr 1fr 6rem">
-        <RowItemTemplate>
-            <FluentDataGridRow TItem=LatestMessages>
-                <FluentDataGridCell GridColumn=1>@context.Sent</FluentDataGridCell>
-                <FluentDataGridCell GridColumn=2>@context.Sender</FluentDataGridCell>
-                <FluentDataGridCell GridColumn=3>@context.MessageType</FluentDataGridCell>
-                <FluentDataGridCell GridColumn=4>
-                    <FluentAnchor href=@($"message/{context.Id}")>Details</FluentAnchor>
-                </FluentDataGridCell>
-            </FluentDataGridRow>
-        </RowItemTemplate>
-    </FluentDataGrid>
-</Loader>
-<Pagination Page=State.Value.Page OnPageChange=@(page => Dispatcher.Dispatch(new FetchData(page))) />
-
+<FluentDataGrid ColumnDefinitions=Columns RowsData=@State.Value.Messages GridTemplateColumns="9rem 1fr 1fr">
+    <RowItemTemplate>
+        <FluentDataGridRow TItem=LatestMessages class="fade">
+            <FluentDataGridCell GridColumn=1>
+                <FluentAnchor Appearance="Appearance.Hypertext" href=@($"message/{context.Id}")>@context.Sent</FluentAnchor>
+            </FluentDataGridCell>
+            <FluentDataGridCell GridColumn=2>@context.Sender</FluentDataGridCell>
+            <FluentDataGridCell GridColumn=3>@context.MessageType</FluentDataGridCell>
+        </FluentDataGridRow>
+    </RowItemTemplate>
+    <ChildContent>
+        <FluentDataGridRow TItem=LatestMessages>
+            <FluentDataGridCell GridColumn=1><FluentSkeleton style="width: 100%; height: 1rem" /></FluentDataGridCell>
+            <FluentDataGridCell GridColumn=2><FluentSkeleton style="width: 100%; height: 1rem" /></FluentDataGridCell>
+            <FluentDataGridCell GridColumn=3><FluentSkeleton style="width: 100%; height: 1rem" /></FluentDataGridCell>
+        </FluentDataGridRow>
+    </ChildContent>
+</FluentDataGrid>
 
 @code {
     private readonly List<ColumnDefinition<LatestMessages>> Columns = new List<ColumnDefinition<LatestMessages>>
@@ -30,6 +35,5 @@
         new ColumnDefinition<LatestMessages>("Sent", x => x.Sent),
         new ColumnDefinition<LatestMessages>("Sender", x => x.Sender),
         new ColumnDefinition<LatestMessages>("Type", x => x.MessageType),
-        new ColumnDefinition<LatestMessages>("", x => x),
     };
 }

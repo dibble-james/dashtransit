@@ -1,5 +1,9 @@
-﻿<Fluxor.Blazor.Web.StoreInitializer/>
-<FluentDesignSystemProvider AccentBaseColor="#42b983" BaseLayerLuminance=@(0.23f)>
+<Fluxor.Blazor.Web.StoreInitializer/>
+<FluentDesignSystemProvider
+    NeutralBaseColor="#ddd"
+    AccentBaseColor="#3eaf7c"
+    BaseLayerLuminance=@(0.3f)
+    ControlCornerRadius=0>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
             <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />

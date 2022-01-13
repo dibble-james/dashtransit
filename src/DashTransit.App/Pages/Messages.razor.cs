@@ -13,7 +13,7 @@ public partial class Messages
     }
 
     [ReducerMethod]
-    public static MessagesState OnFetch(MessagesState state, FetchData action) => state with { Loading = true, Page = action.Page };
+    public static MessagesState OnFetch(MessagesState state, FetchData action) => state with { Loading = true, Page = action.Page, Messages = null };
 
     [ReducerMethod]
     public static MessagesState OnFetched(MessagesState state, Fetched action) => state with { Loading = false, Messages = action.Messages.ToList() };
@@ -22,7 +22,7 @@ public partial class Messages
     public record MessagesState
     {
         public bool Loading { get; init; } = true;
-        public List<LatestMessages> Messages { get; init; } = new List<LatestMessages>();
+        public List<LatestMessages>? Messages { get; init; }
         public int Page { get; init; } = 1;
     }
 

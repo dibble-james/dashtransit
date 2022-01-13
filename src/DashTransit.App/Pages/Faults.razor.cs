@@ -13,7 +13,7 @@ public partial class Faults
     }
 
     [ReducerMethod]
-    public static FaultsState OnFetch(FaultsState state, FetchData action) => state with { Loading = true, Page = action.Page };
+    public static FaultsState OnFetch(FaultsState state, FetchData action) => state with { Loading = true, Page = action.Page, Faults = null };
 
     [ReducerMethod]
     public static FaultsState OnFetched(FaultsState state, Fetched action) => state with { Loading = false, Faults = action.Faults.ToList() };
@@ -22,7 +22,7 @@ public partial class Faults
     public record FaultsState
     {
         public bool Loading { get; init; } = true;
-        public List<LatestFault> Faults { get; init; } = new List<LatestFault>();
+        public List<LatestFault>? Faults { get; init; }
         public int Page { get; init; } = 1;
     }
 

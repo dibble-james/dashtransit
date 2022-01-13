@@ -3,26 +3,33 @@
 @inject IDispatcher Dispatcher
 @inject IState<FaultsState> State
 
-<FluentToolbar>
-    <FluentButton Appearance="@Appearance.Accent" @onclick=@(() => Dispatcher.Dispatch(new FetchData()))><FluentIcon Name="Refresh" /></FluentButton>
+<FluentToolbar style="width: 100%">
+    <FluentButton slot="start" Appearance="@Appearance.Accent" @onclick=@(() => Dispatcher.Dispatch(new FetchData()))><FluentIcon Name="Refresh" /></FluentButton>
+    <div slot="end">
+        <Pagination Page=State.Value.Page OnPageChange=@(page => Dispatcher.Dispatch(new FetchData(page))) />
+    </div>
 </FluentToolbar>
 
-<Loader IsLoading="@State.Value.Loading">
-    <FluentDataGrid ColumnDefinitions=Columns RowsData=@State.Value.Faults GridTemplateColumns="9rem 1fr 1fr 1fr 6rem">
-        <RowItemTemplate>
-            <FluentDataGridRow TItem=LatestFault>
-                <FluentDataGridCell GridColumn=1>@context.Produced</FluentDataGridCell>
-                <FluentDataGridCell GridColumn=2>@context.ProducedBy</FluentDataGridCell>
-                <FluentDataGridCell GridColumn=3>@context.Type</FluentDataGridCell>
-                <FluentDataGridCell GridColumn=4>@context.Exception</FluentDataGridCell>
-                <FluentDataGridCell GridColumn=5>
-                    <FluentAnchor href=@($"fault/{context.Id}")>Details</FluentAnchor>
-                </FluentDataGridCell>
-            </FluentDataGridRow>
-        </RowItemTemplate>
-    </FluentDataGrid>
-</Loader>
-<Pagination Page=State.Value.Page OnPageChange=@(page => Dispatcher.Dispatch(new FetchData(page))) />
+<FluentDataGrid ColumnDefinitions=Columns RowsData=@State.Value.Faults GridTemplateColumns="9rem 1fr 1fr 1fr">
+    <RowItemTemplate>
+        <FluentDataGridRow TItem=LatestFault class="fade">
+            <FluentDataGridCell GridColumn=1>
+                <FluentAnchor Appearance="Appearance.Hypertext" href=@($"fault/{context.Id}")>@context.Produced</FluentAnchor>
+            </FluentDataGridCell>
+            <FluentDataGridCell GridColumn=2>@context.ProducedBy</FluentDataGridCell>
+            <FluentDataGridCell GridColumn=3>@context.Type</FluentDataGridCell>
+            <FluentDataGridCell GridColumn=4>@context.Exception</FluentDataGridCell>
+        </FluentDataGridRow>
+    </RowItemTemplate>
+    <ChildContent>
+        <FluentDataGridRow TItem=LatestFault>
+            <FluentDataGridCell GridColumn=1><FluentSkeleton style="width: 100%; height: 1rem" /></FluentDataGridCell>
+            <FluentDataGridCell GridColumn=2><FluentSkeleton style="width: 100%; height: 1rem" /></FluentDataGridCell>
+            <FluentDataGridCell GridColumn=3><FluentSkeleton style="width: 100%; height: 1rem" /></FluentDataGridCell>
+            <FluentDataGridCell GridColumn=4><FluentSkeleton style="width: 100%; height: 1rem" /></FluentDataGridCell>
+        </FluentDataGridRow>
+    </ChildContent>
+</FluentDataGrid>
 
 
 @code {
@@ -32,6 +39,5 @@
         new ColumnDefinition<LatestFault>("Produced By", x => x.ProducedBy),
         new ColumnDefinition<LatestFault>("Type", x => x.Type),
         new ColumnDefinition<LatestFault>("Exception", x => x.Exception ?? string.Empty),
-        new ColumnDefinition<LatestFault>("", x => x),
     };
 }

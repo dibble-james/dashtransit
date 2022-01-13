@@ -37,6 +37,20 @@ body {
     min-height: 100%;
 }
 
+@keyframes fade {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.fade {
+    animation: 300ms ease-in 0s 1 fade;
+}
+
 /*
   Your use of the content in the files referenced here is subject to the terms of the license at https://aka.ms/fabric-assets-license
 */
