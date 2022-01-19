@@ -30,7 +30,7 @@ namespace FaultGenerator
                         {
                             r.UseEntityFrameworkCoreAuditStore(
                                 new DbContextOptionsBuilder()
-                                    .UseSqlServer("Data Source=localhost;User Id=sa;Password=P@ssword123;Initial Catalog=DashTransit"),
+                                    .UseNpgsql("User ID=sa;Password=P@ssword123;Host=localhost;Port=5432;Database=dashtransit;"),
                                 "__audit");
                             r.Host("amqp://guest:guest@localhost:5672");
                             r.ReceiveEndpoint("demo-billing", e => e.ConfigureConsumer<BillingService>(context));

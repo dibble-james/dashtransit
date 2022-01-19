@@ -12,7 +12,9 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddFluxor(opt => opt.ScanAssemblies(typeof(Program).Assembly));
 
 builder.Services.AddDashTransit();
-builder.Services.UseDashTransitEntityFramework(builder.Configuration.GetValue<string>("store:connection"));
+builder.Services.UseDashTransitEntityFramework(
+    builder.Configuration.GetValue<string>("store:provider"),
+    builder.Configuration.GetValue<string>("store:connection"));
 builder.Services.AddMassTransitHostedService();
 builder.Services.AddMassTransit(bus =>
 {

@@ -25,14 +25,3 @@ public class DashTransitContext : DbContext
         base.OnModelCreating(modelBuilder);
     }
 }
-
-public class DashTransitContextFactory : IDesignTimeDbContextFactory<DashTransitContext>
-{
-    public DashTransitContext CreateDbContext(string[] args)
-    {
-        var optionsBuilder = new DbContextOptionsBuilder<DashTransitContext>();
-        optionsBuilder.UseSqlServer("Data Source=localhost;User Id=sa;Password=P@ssword123;Initial Catalog=DashTransit");
-
-        return new DashTransitContext(optionsBuilder.Options);
-    }
-}

@@ -34,3 +34,18 @@ services:
   env:
   - ACCEPT_EULA=Y
   - SA_PASSWORD=P@ssword123
+- name: postgres
+  image: postgres
+  bindings:
+  - port: 5432
+    protocol: tcp
+    connectionString: "User ID=${env:POSTGRES_USER};Password=${env:POSTGRES_PASSWORD};Host=${host};Port=${port};Database=${env:POSTGRES_DB};"
+  volumes:
+  - source: ./.volumes/pg
+    target: /var/lib/postgresql/data
+  env:
+  - ACCEPT_EULA=Y
+  - POSTGRES_PASSWORD=P@ssword123
+  - POSTGRES_USER=sa
+  - POSTGRES_DB=dashtransit
+  - PGDATA=/var/lib/postgresql/data/pgdata

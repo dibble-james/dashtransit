@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace DashTransit.EntityFramework.Migrations
+namespace DashTransit.EntityFramework.Migrations.SqlServer
 {
     public partial class Initial : Migration
     {
@@ -15,7 +15,7 @@ namespace DashTransit.EntityFramework.Migrations
                 {
                     AuditRecordId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    MessageId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    MessageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ConversationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CorrelationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     InitiatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),

@@ -32,9 +32,10 @@ More to follow but for now we support:
 | --------- |
 | RabbitMQ  |
 
-| Storage    |
-| ---------- |
-| SQL Server |
+| Storage    | Provider Variable |
+| ---------- | ----------------- |
+| SQL Server | sqlserver         |
+| Postgres   | postgres          |
 
 ## Getting started
 
@@ -43,11 +44,11 @@ DashTransit is distributed as a Docker container. Both Linux and Windows contain
 You can create the tables DashTransit requires by migrating using:
 
 ```
-docker run --name dashtransit-migrations -e store__connection= ghcr.io/dibble-james/dashtransit migrate
+docker run --name dashtransit-migrations -e store__provider=<PROVIDER VARIABLE> -e store__connection= ghcr.io/dibble-james/dashtransit migrate
 ```
 
 Just provide connection strings for the storage and transport. The web app is exposed on port 80.
 
 ```
-docker run -d -p 80:<desired port> --name dashtransit -e transport__connection= -e store_connection= ghcr.io/dibble-james/dashtransit
+docker run -d -p 80:<desired port> --name dashtransit -e transport__connection= -e store__provider=<PROVIDER VARIABLE> -e store_connection= ghcr.io/dibble-james/dashtransit
 ```
