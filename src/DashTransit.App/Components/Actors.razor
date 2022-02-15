@@ -1,21 +1,28 @@
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-@inject IDispatcher Dispatcher
-@inject IState<ActorState> State
+@inherits HookComponentBase
+@inject IMediator Mediator
 
 @code {
     [Parameter, EditorRequired]
-    public MessageId? MessageId { get; set; }
+    public MessageId MessageId { get; set; } = null!;
+}
+
+@{
+    var (load, setLoad) = Hook.UseState(false);
 }
 
 <FluentAccordion>
-    <FluentAccordionItem @onclick=@LoadActors>
+    <FluentAccordionItem @onclick=@(() => setLoad(!load))>
         <div slot="heading">Actors</div>
-        <Loader IsLoading=@State.Value.Loading>
-            <div style="height: 25vh">
-                <CascadingValue Value="State.Value.Actors">
-                    <DiagramCanvas></DiagramCanvas>
-                </CascadingValue>
-            </div>
-        </Loader>
+
+        @if (load)
+        {
+            <FluentLoader Fetch=@LoadActors>
+                <div style="height: 25vh">
+                    <CascadingValue Value=@context>
+                        <DiagramCanvas></DiagramCanvas>
+                    </CascadingValue>
+                </div>
+            </FluentLoader>
+        }
     </FluentAccordionItem>
 </FluentAccordion>

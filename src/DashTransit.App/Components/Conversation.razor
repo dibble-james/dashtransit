@@ -1,28 +1,38 @@
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-@inject IDispatcher Dispatcher
-@inject IState<ConversationState> State
+@inherits HookComponentBase
+@inject IMediator Mediator;
 
 @code {
     [Parameter, EditorRequired]
     public Guid ConversationId { get; set; }
+
+    private async Task<List<IRawAuditData>> FetchConversation()
+        => (await this.Mediator.Send(new ConversationById(ConversationId))).ToList();
+}
+
+@{
+    var (load, setLoad) = Hook.UseState(false);
 }
 
 <FluentAccordion>
-    <FluentAccordionItem @onclick=@LoadConversation>
+    <FluentAccordionItem @onclick=@(() => setLoad(!load))>
         <div slot="heading">Conversation</div>
-        <Loader IsLoading=@State.Value.Loading>
-            <FluentDataGrid ColumnDefinitions=Columns RowsData=@State.Value.Conversation GridTemplateColumns="9rem 1fr 6rem">
-                <RowItemTemplate>
-                    <FluentDataGridRow TItem=IRawAuditData>
-                        <FluentDataGridCell GridColumn=1>@context.SentTime</FluentDataGridCell>
-                        <FluentDataGridCell GridColumn=2>@context.MessageType</FluentDataGridCell>
-                        <FluentDataGridCell GridColumn=3>
-                            <FluentAnchor href=@($"message/{context.AuditRecordId}")>Details</FluentAnchor>
-                        </FluentDataGridCell>
-                    </FluentDataGridRow>
-                </RowItemTemplate>
-            </FluentDataGrid>
-        </Loader>
+
+        @if (load)
+        {
+            <FluentLoader Fetch=@FetchConversation>
+                <FluentDataGrid ColumnDefinitions=Columns RowsData=@context GridTemplateColumns="9rem 1fr 6rem">
+                    <RowItemTemplate Context="message">
+                        <FluentDataGridRow TItem=IRawAuditData>
+                            <FluentDataGridCell GridColumn=1>@message.SentTime</FluentDataGridCell>
+                            <FluentDataGridCell GridColumn=2>@message.MessageType</FluentDataGridCell>
+                            <FluentDataGridCell GridColumn=3>
+                                <FluentAnchor href=@($"message/{message.AuditRecordId}")>Details</FluentAnchor>
+                            </FluentDataGridCell>
+                        </FluentDataGridRow>
+                    </RowItemTemplate>
+                </FluentDataGrid>
+            </FluentLoader>
+        }
     </FluentAccordionItem>
 </FluentAccordion>
 

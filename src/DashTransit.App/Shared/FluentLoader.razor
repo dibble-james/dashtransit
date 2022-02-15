@@ -1,0 +1,13 @@
+@typeparam T
+
+@code {
+    [Parameter, EditorRequired]
+    public RenderFragment<T> ChildContent { get; init; } = null!;
+
+    public Func<Task<T>> Fetch { get; init; } = null!;
+}
+
+<BlazorHooked.Loader Load=@Fetch>
+    <Loading><FluentProgressRing /></Loading>
+    <Loaded>@ChildContent(context)</Loaded>
+</BlazorHooked.Loader>

@@ -1,5 +1,4 @@
 @code {
-
     [Parameter, EditorRequired]
     public string? Title { get; init; }
 
@@ -7,25 +6,15 @@
     public string? Rate { get; init; }
 
     [Parameter, EditorRequired]
-    public string? Stat { get; init; }
-
-    [Parameter, EditorRequired]
-    public bool Loading { get; init; }
-
+    public Func<Task<string>>? Stat { get; init; }
 }
 
 <FluentCard>
     <div class="widget">
         <span class="title">@Title</span>
-        @if (Loading)
-        {
-            <FluentProgressRing/>
-        }
-        else
-        {
-            <span class="stat">@Stat</span>
-        }
+        <FluentLoader Fetch=@Stat>
+            <span class="stat">@context</span>
+        </FluentLoader>
         <span class="rate">@Rate</span>
     </div>
-
 </FluentCard>

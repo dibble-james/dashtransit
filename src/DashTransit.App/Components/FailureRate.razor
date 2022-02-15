@@ -1,5 +1,12 @@
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-@inject IState<FailureRateState> State
-@inject IDispatcher Dispatcher
+@inject IMediator Mediator;
 
-<StatCard Loading=@State.Value.Loading Title="Failure Rate" Rate="%" Stat=@State.Value.Rate.ToString("0.00") />
+@code {
+    private async Task<string> Fetch()
+    {
+        return (await Mediator.Send(new CalculateFailureRate())).ToString("0.00");
+    }
+}
+
+<FluentCard>
+    <StatCard Title="Failure Rate" Rate="%" Stat=@Fetch />
+</FluentCard>
