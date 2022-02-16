@@ -1,46 +1,55 @@
 @page "/fault/{FaultId:int}"
+@inherits HookComponentBase
+@using DashTransit.Core.Application.Commands
 @using Newtonsoft.Json
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-@inject IDispatcher Dispatcher
-@inject IState<FaultState> State
+@inject IMediator Mediator
 
 @code {
-
     [Parameter]
     public int FaultId { get; set; }
 
+    public Task<Core.Domain.Fault?> FetchFault()
+        => this.Mediator.Send(new FaultById(Core.Domain.FaultId.From(FaultId)));
+
+    public Action Resend(SetState<bool> setResending, AuditId auditId, EndpointId endpointId) => async () =>
+    {
+        setResending(true);
+        await this.Mediator.Send(new ResendMessage(auditId, endpointId));
+        setResending(false);
+    };
 }
 
-<Loader IsLoading=@State.Value.Loading>
-    @if (State.Value is null)
+<FluentLoader Fetch=@FetchFault Dependencies=@(new object[] { FaultId })>
+    @if (context is null)
     {
         <p>Message not found</p>
     }
     else
     {
+        var (resending, setResending) = Hook.UseState(false);
+
         <FluentToolbar>
-            <FluentButton
-                slot="end"
-                Appearance="Appearance.Accent"
-                disabled=@State.Value.Resending
-                @onclick="() => Dispatcher.Dispatch(new TriggerResend(AuditId.From(State.Value.Fault!.Message!.AuditRecordId), State.Value.Fault.ProducedBy))">
+            <FluentButton slot="end"
+                      Appearance="Appearance.Accent"
+                      disabled=@resending
+                      @onclick=@Resend(setResending, AuditId.From(context.Message!.AuditRecordId), context.ProducedBy)>
                 Resend
             </FluentButton>
         </FluentToolbar>
         <div class="container">
             <div>
-                <h3>@State.Value.Fault!.Exceptions.First().Message</h3>
+                <h3>@context.Exceptions.First().Message</h3>
                 <dl>
                     <DL T="Message Id">
-                        <FluentAnchor Appearance="Appearance.Hypertext" Href=@($"/message/{State.Value.Fault!.Message!.AuditRecordId}")>@(State.Value.Fault!.MessageId)</FluentAnchor>
+                        <FluentAnchor Appearance="Appearance.Hypertext" Href=@($"/message/{context.Message!.AuditRecordId}")>@(context.MessageId)</FluentAnchor>
                     </DL>
-                    <DL T="Faulted" D=@(State.Value.Fault!.Produced)/>
-                    <DL T="Endpoint" D=@(State.Value.Fault!.ProducedBy)/>
-                    <DL T="Exception Type" D=@(State.Value.Fault.Exceptions.First().ExceptionType)/>
-                    <DL T="Source" D=@(State.Value.Fault.Exceptions.First().Source)/>
+                    <DL T="Faulted" D=@(context.Produced) />
+                    <DL T="Endpoint" D=@(context.ProducedBy) />
+                    <DL T="Exception Type" D=@(context.Exceptions.First().ExceptionType) />
+                    <DL T="Source" D=@(context.Exceptions.First().Source) />
                 </dl>
             </div>
-            <pre>@State.Value.Fault.Exceptions.First().StackTrace</pre>
+            <pre>@context.Exceptions.First().StackTrace</pre>
         </div>
     }
-</Loader>
+</FluentLoader>

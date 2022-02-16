@@ -1,6 +1,5 @@
 using DashTransit.Core;
 using DashTransit.EntityFramework;
-using Fluxor;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddFluxor(opt => opt.ScanAssemblies(typeof(Program).Assembly));
 
 builder.Services.AddDashTransit();
 builder.Services.UseDashTransitEntityFramework(

@@ -6,7 +6,6 @@ namespace DashTransit.EntityFramework.Entities;
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Core.Domain;
 using MassTransit;
 
@@ -29,5 +28,5 @@ public class Fault : Core.Domain.Fault
         this.Messages = messages;
     }
 
-    public override IReadOnlyCollection<IRawAuditData> Messages { get; }
+    public override IReadOnlyCollection<IRawAuditData> Messages { get; } = null!;
 }

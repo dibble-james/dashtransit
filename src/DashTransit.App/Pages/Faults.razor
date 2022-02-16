@@ -1,16 +1,30 @@
 @page "/fault"
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-@inject IDispatcher Dispatcher
-@inject IState<FaultsState> State
+@inherits HookComponentBase
+@inject IMediator Mediator
+
+@code {
+    private Action<int> FetchFaults(SetState<int> setPage, SetState<List<LatestFault>?> setFaults) => async (int page) =>
+    {
+        setFaults(null);
+        var faults = await this.Mediator.Send(new LatestFaultsQuery(page));
+        setPage(page);
+        setFaults(faults.ToList());
+    };
+}
+
+@{
+    var (page, setPage) = Hook.UseState(1);
+    var (faults, setFaults) = Hook.UseState<List<LatestFault>?>(null);
+}
 
 <FluentToolbar style="width: 100%">
-    <FluentButton slot="start" Appearance="@Appearance.Accent" @onclick=@(() => Dispatcher.Dispatch(new FetchData()))><FluentIcon Name="Refresh" /></FluentButton>
+    <FluentButton slot="start" Appearance="@Appearance.Accent" @onclick=@(() => FetchFaults(setPage, setFaults)(1))><FluentIcon Name="Refresh" /></FluentButton>
     <div slot="end">
-        <Pagination Page=State.Value.Page OnPageChange=@(page => Dispatcher.Dispatch(new FetchData(page))) />
+        <Pagination Page=page OnPageChange=@FetchFaults(setPage, setFaults) />
     </div>
 </FluentToolbar>
 
-<FluentDataGrid ColumnDefinitions=Columns RowsData=@State.Value.Faults GridTemplateColumns="9rem 1fr 1fr 1fr">
+<FluentDataGrid ColumnDefinitions=Columns RowsData=@faults GridTemplateColumns="9rem 1fr 1fr 1fr">
     <RowItemTemplate>
         <FluentDataGridRow TItem=LatestFault class="fade">
             <FluentDataGridCell GridColumn=1>

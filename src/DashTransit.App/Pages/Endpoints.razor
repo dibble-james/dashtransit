@@ -1,13 +1,19 @@
 @page "/endpoint"
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-@inject IDispatcher Dispatcher
-@inject IState<EndpointsState> State
 
-<Loader IsLoading="@State.Value.Loading">
-    <div class="container">
-        @foreach (var endpoint in this.State.Value.Endpoints)
-        {
-            <DashTransit.App.Components.Endpoint EndpointId=@endpoint />
-        }
-    </div>
+@inject IMediator Mediator
+
+@code {
+    private Task<IEnumerable<EndpointId>> FetchEndpoints()
+        => this.Mediator.Send(new Core.Application.Queries.Endpoints());
+}
+
+<Loader Load=@FetchEndpoints>
+    <Loaded>
+        <div class="container">
+            @foreach (var endpoint in context)
+            {
+                <DashTransit.App.Components.Endpoint EndpointId=@endpoint />
+            }
+        </div>
+    </Loaded>
 </Loader>
