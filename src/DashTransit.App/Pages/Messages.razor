@@ -3,7 +3,7 @@
 @inject IMediator Mediator
 
 @code {
-    private Action<int> FetchMessage(SetState<int> setPage, SetState<List<LatestMessages>?> setMessages) => async (int page) =>
+    private Action<int> FetchMessages(SetState<int> setPage, SetState<List<LatestMessages>?> setMessages) => async (int page) =>
     {
         setMessages(null);
         var messages = await this.Mediator.Send(new LatestMessagesQuery(page));
@@ -15,12 +15,13 @@
 @{
     var (page, setPage) = Hook.UseState(1);
     var (messages, setMessages) = Hook.UseState<List<LatestMessages>?>(null);
+    Hook.UseEffect(() => FetchMessages(setPage, setMessages)(1));
 }
 
 <FluentToolbar style="width: 100%">
-    <FluentButton slot="start" Appearance="@Appearance.Accent" @onclick=@(() => FetchMessage(setPage, setMessages)(1))><FluentIcon Name="Refresh" /></FluentButton>
+    <FluentButton slot="start" Appearance="@Appearance.Accent" @onclick=@(() => FetchMessages(setPage, setMessages)(1))><FluentIcon Name="Refresh" /></FluentButton>
     <div slot="end">
-        <Pagination Page=page OnPageChange=@FetchMessage(setPage, setMessages) />
+        <Pagination Page=page OnPageChange=@FetchMessages(setPage, setMessages) />
     </div>
 </FluentToolbar>
 

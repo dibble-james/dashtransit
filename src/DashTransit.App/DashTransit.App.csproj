@@ -10,7 +10,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="BlazorHooked" Version="0.3.1" />
+		<PackageReference Include="BlazorHooked" Version="0.3.2" />
 		<PackageReference Include="GraphShape" Version="1.2.1" />
 		<PackageReference Include="MassTransit.AspNetCore" Version="7.1.*" />
 		<PackageReference Include="MassTransit.RabbitMQ" Version="7.1.*" />

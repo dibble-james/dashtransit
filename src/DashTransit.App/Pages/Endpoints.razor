@@ -3,17 +3,15 @@
 @inject IMediator Mediator
 
 @code {
-    private Task<IEnumerable<EndpointId>> FetchEndpoints()
-        => this.Mediator.Send(new Core.Application.Queries.Endpoints());
+    private async Task<IEnumerable<EndpointId>> FetchEndpoints()
+        => await this.Mediator.Send(new Core.Application.Queries.Endpoints());
 }
 
-<Loader Load=@FetchEndpoints>
-    <Loaded>
-        <div class="container">
-            @foreach (var endpoint in context)
-            {
-                <DashTransit.App.Components.Endpoint EndpointId=@endpoint />
-            }
-        </div>
-    </Loaded>
-</Loader>
+<FluentLoader Fetch=@FetchEndpoints>
+    <div class="container">
+        @foreach (var endpoint in context)
+        {
+            <DashTransit.App.Components.Endpoint EndpointId=@endpoint />
+        }
+    </div>
+</FluentLoader>

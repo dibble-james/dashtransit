@@ -4,14 +4,19 @@
     [Parameter, EditorRequired]
     public RenderFragment<T> ChildContent { get; init; } = null!;
 
-    [Parameter]
-    public object[]? Dependencies { get; init; }
+    [Parameter, EditorRequired]
+    public Func<Task<T>> Fetch { get; init; } = null!;
 
     [Parameter]
-    public Func<Task<T>> Fetch { get; init; } = null!;
+    public object[]? Dependencies { get; init; }
 }
 
 <BlazorHooked.Loader Load=@Fetch Dependencies=@Dependencies>
-    <Loading><FluentProgressRing /></Loading>
+    <Loading>
+        <div style="width: 100%; display: flex; justify-content: center">
+            <FluentProgressRing />
+        </div>
+    </Loading>
     <Loaded>@ChildContent(context)</Loaded>
+    <Failed>Doh...</Failed>
 </BlazorHooked.Loader>

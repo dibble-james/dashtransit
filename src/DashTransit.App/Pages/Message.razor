@@ -8,7 +8,7 @@
     public int AuditId { get; set; }
 
     private Task<IRawAuditData?> FetchMessage()
-        => this.Mediator.Send(new MessageByAuditId(Core.Domain.AuditId.From(AuditId)));
+        => this.Mediator.Send(new MessageByAuditId(Core.Domain.AuditId.From(AuditId))); 
 }
 
 <FluentLoader Fetch=@FetchMessage Dependencies=@(new object[] { AuditId })>
