@@ -4,6 +4,11 @@ extensions:
 - name: seq
   logPath: ./.volumes/seq
 services:
+- name: dashtransit
+  project: src/DashTransit.App/DashTransit.App.csproj
+  bindings:
+  - protocol: http
+    port: 5149
 - name: rabbitmq
   image: rabbitmq:3-management-alpine
   bindings:
