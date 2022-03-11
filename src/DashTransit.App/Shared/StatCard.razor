@@ -9,7 +9,7 @@
     public Func<Task<string>>? Stat { get; init; }
 }
 
-<FluentCard>
+<HxCard>
     <div class="widget">
         <span class="title">@Title</span>
         <FluentLoader Fetch=@Stat>
@@ -17,4 +17,4 @@
         </FluentLoader>
         <span class="rate">@Rate</span>
     </div>
-</FluentCard>
+</HxCard>

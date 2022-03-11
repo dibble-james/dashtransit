@@ -3,57 +3,27 @@
 @inject IMediator Mediator
 
 @code {
-    private Action<int> FetchFaults(SetState<int> setPage, SetState<List<LatestFault>?> setFaults) => async (int page) =>
+    private async Task<GridDataProviderResult<LatestFault>> FetchFaults(GridDataProviderRequest<LatestFault> request)
     {
-        setFaults(null);
-        var faults = await this.Mediator.Send(new LatestFaultsQuery(page));
-        setPage(page);
-        setFaults(faults.ToList());
-    };
+        var faults = await this.Mediator.Send(new LatestFaultsQuery(request.StartIndex, request.Count!.Value));
+
+        return new GridDataProviderResult<LatestFault>
+        {
+            Data = faults.Items,
+            TotalCount = faults.Total,
+        };
+    }
 }
 
-@{
-    var (page, setPage) = Hook.UseState(1);
-    var (faults, setFaults) = Hook.UseState<List<LatestFault>?>(null);
-
-    Hook.UseEffect(() => FetchFaults(setPage, setFaults)(1));
-}
-
-<FluentToolbar style="width: 100%">
-    <FluentButton slot="start" Appearance="@Appearance.Accent" @onclick=@(() => FetchFaults(setPage, setFaults)(1))><FluentIcon Name="Refresh" /></FluentButton>
-    <div slot="end">
-        <Pagination Page=page OnPageChange=@FetchFaults(setPage, setFaults) />
-    </div>
-</FluentToolbar>
-
-<FluentDataGrid ColumnDefinitions=Columns RowsData=@faults GridTemplateColumns="9rem 1fr 1fr 1fr">
-    <RowItemTemplate>
-        <FluentDataGridRow TItem=LatestFault class="fade">
-            <FluentDataGridCell GridColumn=1>
-                <FluentAnchor Appearance="Appearance.Hypertext" href=@($"fault/{context.Id}")>@context.Produced</FluentAnchor>
-            </FluentDataGridCell>
-            <FluentDataGridCell GridColumn=2>@context.ProducedBy</FluentDataGridCell>
-            <FluentDataGridCell GridColumn=3>@context.Type</FluentDataGridCell>
-            <FluentDataGridCell GridColumn=4>@context.Exception</FluentDataGridCell>
-        </FluentDataGridRow>
-    </RowItemTemplate>
-    <ChildContent>
-        <FluentDataGridRow TItem=LatestFault>
-            <FluentDataGridCell GridColumn=1><FluentSkeleton style="width: 100%; height: 1rem" /></FluentDataGridCell>
-            <FluentDataGridCell GridColumn=2><FluentSkeleton style="width: 100%; height: 1rem" /></FluentDataGridCell>
-            <FluentDataGridCell GridColumn=3><FluentSkeleton style="width: 100%; height: 1rem" /></FluentDataGridCell>
-            <FluentDataGridCell GridColumn=4><FluentSkeleton style="width: 100%; height: 1rem" /></FluentDataGridCell>
-        </FluentDataGridRow>
-    </ChildContent>
-</FluentDataGrid>
-
-
-@code {
-    private readonly List<ColumnDefinition<LatestFault>> Columns = new List<ColumnDefinition<LatestFault>>
-    {
-        new ColumnDefinition<LatestFault>("Produced", x => x.Produced),
-        new ColumnDefinition<LatestFault>("Produced By", x => x.ProducedBy),
-        new ColumnDefinition<LatestFault>("Type", x => x.Type),
-        new ColumnDefinition<LatestFault>("Exception", x => x.Exception ?? string.Empty),
-    };
-}
+<HxGrid DataProvider="FetchFaults" PageSize=25 TItem=LatestFault>
+    <Columns>
+        <HxGridColumn HeaderText="Produced" TItem=LatestFault>
+            <ItemTemplate>
+                <a href=@($"fault/{context.Id}")>@context.Produced</a>
+            </ItemTemplate>
+        </HxGridColumn>
+        <HxGridColumn TItem=LatestFault HeaderText="Produced By" ItemTextSelector=@(x => x.ProducedBy.Value.ToString()) />
+        <HxGridColumn TItem=LatestFault HeaderText="Type" ItemTextSelector=@(x => x.Type.Value) />
+        <HxGridColumn TItem=LatestFault HeaderText="Exception" ItemTextSelector=@(x => x.Exception ?? string.Empty) />
+    </Columns>
+</HxGrid>

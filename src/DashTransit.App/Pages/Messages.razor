@@ -1,54 +1,27 @@
 @page "/message"
 @inherits HookComponentBase
 @inject IMediator Mediator
-
 @code {
-    private Action<int> FetchMessages(SetState<int> setPage, SetState<List<LatestMessages>?> setMessages) => async (int page) =>
+    private async Task<GridDataProviderResult<LatestMessages>> FetchMessages(GridDataProviderRequest<LatestMessages> request)
     {
-        setMessages(null);
-        var messages = await this.Mediator.Send(new LatestMessagesQuery(page));
-        setPage(page);
-        setMessages(messages.ToList());
-    };
+        var messages = await this.Mediator.Send(new LatestMessagesQuery(request.StartIndex, request.Count!.Value));
+
+        return new GridDataProviderResult<LatestMessages>
+        {
+            Data = messages.Items,
+            TotalCount = messages.Total,
+        };
+    }
 }
 
-@{
-    var (page, setPage) = Hook.UseState(1);
-    var (messages, setMessages) = Hook.UseState<List<LatestMessages>?>(null);
-    Hook.UseEffect(() => FetchMessages(setPage, setMessages)(1));
-}
-
-<FluentToolbar style="width: 100%">
-    <FluentButton slot="start" Appearance="@Appearance.Accent" @onclick=@(() => FetchMessages(setPage, setMessages)(1))><FluentIcon Name="Refresh" /></FluentButton>
-    <div slot="end">
-        <Pagination Page=page OnPageChange=@FetchMessages(setPage, setMessages) />
-    </div>
-</FluentToolbar>
-
-<FluentDataGrid ColumnDefinitions=Columns RowsData=@messages GridTemplateColumns="9rem 1fr 1fr">
-    <RowItemTemplate>
-        <FluentDataGridRow TItem=LatestMessages class="fade">
-            <FluentDataGridCell GridColumn=1>
-                <FluentAnchor Appearance="Appearance.Hypertext" href=@($"message/{context.Id}")>@context.Sent</FluentAnchor>
-            </FluentDataGridCell>
-            <FluentDataGridCell GridColumn=2>@context.Sender</FluentDataGridCell>
-            <FluentDataGridCell GridColumn=3>@context.MessageType</FluentDataGridCell>
-        </FluentDataGridRow>
-    </RowItemTemplate>
-    <ChildContent>
-        <FluentDataGridRow TItem=LatestMessages>
-            <FluentDataGridCell GridColumn=1><FluentSkeleton style="width: 100%; height: 1rem" /></FluentDataGridCell>
-            <FluentDataGridCell GridColumn=2><FluentSkeleton style="width: 100%; height: 1rem" /></FluentDataGridCell>
-            <FluentDataGridCell GridColumn=3><FluentSkeleton style="width: 100%; height: 1rem" /></FluentDataGridCell>
-        </FluentDataGridRow>
-    </ChildContent>
-</FluentDataGrid>
-
-@code {
-    private readonly List<ColumnDefinition<LatestMessages>> Columns = new List<ColumnDefinition<LatestMessages>>
-    {
-        new ColumnDefinition<LatestMessages>("Sent", x => x.Sent),
-        new ColumnDefinition<LatestMessages>("Sender", x => x.Sender),
-        new ColumnDefinition<LatestMessages>("Type", x => x.MessageType),
-    };
-}
+<HxGrid DataProvider="FetchMessages" PageSize=25 TItem=LatestMessages>
+    <Columns>
+        <HxGridColumn HeaderText="Produced" TItem=LatestMessages>
+            <ItemTemplate>
+                <a href=@($"message/{context.Id}")>@context.Sent</a>
+            </ItemTemplate>
+        </HxGridColumn>
+        <HxGridColumn TItem=LatestMessages HeaderText="Produced By" ItemTextSelector=@(x => x.Sender.Value.ToString()) />
+        <HxGridColumn TItem=LatestMessages HeaderText="Type" ItemTextSelector=@(x => x.MessageType.Value) />
+    </Columns>
+</HxGrid>

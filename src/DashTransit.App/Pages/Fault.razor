@@ -28,20 +28,16 @@
     {
         var (resending, setResending) = Hook.UseState(false);
 
-        <FluentToolbar>
-            <FluentButton slot="end"
-                      Appearance="Appearance.Accent"
-                      disabled=@resending
-                      @onclick=@Resend(setResending, AuditId.From(context.Message!.AuditRecordId), context.ProducedBy)>
-                Resend
-            </FluentButton>
-        </FluentToolbar>
+        <HxButton Color="ThemeColor.Primary"
+            Text="Resend"
+              disabled=@resending
+              @onclick=@Resend(setResending, AuditId.From(context.Message!.AuditRecordId), context.ProducedBy) />
         <div class="container">
             <div>
                 <h3>@context.Exceptions.First().Message</h3>
                 <dl>
                     <DL T="Message Id">
-                        <FluentAnchor Appearance="Appearance.Hypertext" Href=@($"/message/{context.Message!.AuditRecordId}")>@(context.MessageId)</FluentAnchor>
+                        <a Href=@($"/message/{context.Message!.AuditRecordId}")>@(context.MessageId)</a>
                     </DL>
                     <DL T="Faulted" D=@(context.Produced) />
                     <DL T="Endpoint" D=@(context.ProducedBy) />

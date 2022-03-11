@@ -1,14 +1,14 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 
 <PageTitle>DashTransit</PageTitle>
 
 <main>
     <nav>
         <h1>DashTransit</h1>
-        <FluentAnchor class="side-link" href="/" Appearance=@Appearance.Lightweight>Dashboard</FluentAnchor>
-        <FluentAnchor class="side-link" href="message" Appearance=@Appearance.Lightweight>Messages</FluentAnchor>
-        <FluentAnchor class="side-link" href="fault" Appearance=@Appearance.Lightweight>Faults</FluentAnchor>
-        <FluentAnchor class="side-link" href="endpoint" Appearance=@Appearance.Lightweight>Endpoints</FluentAnchor>
+        <a class="side-link" href="/">Dashboard</a>
+        <a class="side-link" href="message">Messages</a>
+        <a class="side-link" href="fault">Faults</a>
+        <a class="side-link" href="endpoint">Endpoints</a>
     </nav>
     <article>
         @Body

@@ -10,19 +10,20 @@
     var (load, setLoad) = Hook.UseState(false);
 }
 
-<FluentAccordion>
-    <FluentAccordionItem @onclick=@(() => setLoad(!load))>
-        <div slot="heading">Actors</div>
-
-        @if (load)
-        {
-            <FluentLoader Fetch=@LoadActors>
-                <div style="height: 25vh">
-                    <CascadingValue Value=@context>
-                        <DiagramCanvas></DiagramCanvas>
-                    </CascadingValue>
-                </div>
-            </FluentLoader>
-        }
-    </FluentAccordionItem>
-</FluentAccordion>
+<HxAccordion ExpandedItemIdChanged=@(() => setLoad(!load))>
+    <HxAccordionItem>
+        <HeaderTemplate>Actors</HeaderTemplate>
+        <BodyTemplate>
+            @if (load)
+            {
+                <FluentLoader Fetch=@LoadActors>
+                    <div style="height: 25vh">
+                        <CascadingValue Value=@context>
+                            <DiagramCanvas></DiagramCanvas>
+                        </CascadingValue>
+                    </div>
+                </FluentLoader>
+            }
+        </BodyTemplate>
+    </HxAccordionItem>
+</HxAccordion>
