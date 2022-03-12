@@ -1,7 +1,0 @@
-{
-    "files.exclude": {
-        "**/.volumes": true,
-        "**/bin": true,
-        "**/obj": true
-    }
-}

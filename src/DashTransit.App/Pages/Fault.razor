@@ -1,46 +1,72 @@
 @page "/fault/{FaultId:int}"
+<DTPageTitle>Fault</DTPageTitle>
+@inherits HookComponentBase
+@using DashTransit.Core.Application.Commands
 @using Newtonsoft.Json
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-@inject IDispatcher Dispatcher
-@inject IState<FaultState> State
+@inject IMediator Mediator
+@inject IHxMessengerService Messenger
 
 @code {
-
     [Parameter]
     public int FaultId { get; set; }
 
+    public Task<Core.Domain.Fault?> FetchFault()
+        => this.Mediator.Send(new FaultById(Core.Domain.FaultId.From(FaultId)));
+
+    public Action Resend(SetState<bool> setResending, AuditId auditId, EndpointId endpointId) => async () =>
+    {
+        try
+        {
+            setResending(true);
+            await this.Mediator.Send(new ResendMessage(auditId, endpointId));
+            this.Messenger.AddInformation("Resend", $"Message {auditId} Resent");
+        }
+        catch
+        {
+            this.Messenger.AddError("Resend", $"Couldn't resend message {auditId}");
+        }
+        finally
+        {
+            setResending(false);
+        }
+    };
 }
 
-<Loader IsLoading=@State.Value.Loading>
-    @if (State.Value is null)
+<FluentLoader Fetch=@FetchFault Dependencies=@(new object[] { FaultId })>
+    @if (context is null)
     {
         <p>Message not found</p>
     }
     else
     {
-        <FluentToolbar>
-            <FluentButton
-                slot="end"
-                Appearance="Appearance.Accent"
-                disabled=@State.Value.Resending
-                @onclick="() => Dispatcher.Dispatch(new TriggerResend(AuditId.From(State.Value.Fault!.Message!.AuditRecordId), State.Value.Fault.ProducedBy))">
-                Resend
-            </FluentButton>
-        </FluentToolbar>
-        <div class="container">
-            <div>
-                <h3>@State.Value.Fault!.Exceptions.First().Message</h3>
-                <dl>
-                    <DL T="Message Id">
-                        <FluentAnchor Appearance="Appearance.Hypertext" Href=@($"/message/{State.Value.Fault!.Message!.AuditRecordId}")>@(State.Value.Fault!.MessageId)</FluentAnchor>
-                    </DL>
-                    <DL T="Faulted" D=@(State.Value.Fault!.Produced)/>
-                    <DL T="Endpoint" D=@(State.Value.Fault!.ProducedBy)/>
-                    <DL T="Exception Type" D=@(State.Value.Fault.Exceptions.First().ExceptionType)/>
-                    <DL T="Source" D=@(State.Value.Fault.Exceptions.First().Source)/>
-                </dl>
-            </div>
-            <pre>@State.Value.Fault.Exceptions.First().StackTrace</pre>
+        var (resending, setResending) = Hook.UseState(false);
+
+        <div class="d-flex">
+            <h3 class="flex-fill" style="word-break: break-all">@context.Exceptions.First().Message</h3>
+            <HxButton
+                  CssClass="align-self-start"
+                  Color="ThemeColor.Primary"
+                  Text="Resend"
+                  disabled=@resending
+                  @onclick=@Resend(setResending, AuditId.From(context.Message!.AuditRecordId), context.ProducedBy) />
         </div>
+        <TwoColumnLayout>
+            <Left>
+                <div>
+                    <dl>
+                        <DL T="Message Id">
+                            <a Href=@($"/message/{context.Message!.AuditRecordId}")>@(context.MessageId)</a>
+                        </DL>
+                        <DL T="Faulted" D=@(context.Produced) />
+                        <DL T="Endpoint" D=@(context.ProducedBy) />
+                        <DL T="Exception Type" D=@(context.Exceptions.First().ExceptionType) />
+                        <DL T="Source" D=@(context.Exceptions.First().Source) />
+                    </dl>
+                </div>
+            </Left>
+            <Right>
+                <Code>@context.Exceptions.First().StackTrace</Code>
+            </Right>
+        </TwoColumnLayout>
     }
-</Loader>
+</FluentLoader>

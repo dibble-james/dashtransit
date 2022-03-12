@@ -1,5 +1,10 @@
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-@inject IState<ProcessingRateState> State
-@inject IDispatcher Dispatcher
+@inject IMediator Mediator;
 
-<StatCard Loading=@State.Value.Loading Title="Avg Processing Time" Rate="ms" Stat=@State.Value.Rate.TotalMilliseconds.ToString() />
+@code {
+    private async Task<string> Fetch()
+    {
+        return (await Mediator.Send(new CalculateProcessingRate())).TotalMilliseconds.ToString();
+    }
+}
+
+<StatCard Title="Avg Processing Time" Rate="ms" Stat=@Fetch />

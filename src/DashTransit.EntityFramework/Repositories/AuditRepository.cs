@@ -30,7 +30,7 @@ public class AuditRepository : IReadRepositoryBase<IRawAuditData>
     public Task<TResult> GetBySpecAsync<TResult>(
         ISpecification<IRawAuditData, TResult> specification, CancellationToken cancellationToken = default)
         => SpecificationEvaluator.Default.GetQuery(this.context.Set<RawAudit>(), specification)
-            .FirstOrDefaultAsync(cancellationToken);
+            .FirstAsync(cancellationToken);
 
     public Task<List<IRawAuditData>> ListAsync(ISpecification<IRawAuditData> specification,
         CancellationToken cancellationToken = default)
@@ -38,15 +38,14 @@ public class AuditRepository : IReadRepositoryBase<IRawAuditData>
             .ToListAsync(cancellationToken);
 
     Task<List<TResult>> IReadRepositoryBase<IRawAuditData>.ListAsync<TResult>(
-        ISpecification<IRawAuditData, TResult> specification, CancellationToken cancellationToken = default)
+        ISpecification<IRawAuditData, TResult> specification, CancellationToken cancellationToken)
         => SpecificationEvaluator.Default.GetQuery(this.context.Set<RawAudit>(), specification)
             .ToListAsync(cancellationToken);
 
-    public async Task<IRawAuditData> GetByIdAsync<TId>(TId id,
-        CancellationToken cancellationToken)
-        => await this.context.Set<RawAudit>().FindAsync(new object[] {id}, cancellationToken);
+    async Task<IRawAuditData?> IReadRepositoryBase<IRawAuditData>.GetByIdAsync<TId>(TId id, CancellationToken cancellationToken)
+        => await this.context.Set<RawAudit>().FindAsync(new object[] { id! }, cancellationToken);
 
-    public Task<IRawAuditData> GetBySpecAsync<Spec>(Spec specification,
+    public Task<IRawAuditData?> GetBySpecAsync<Spec>(Spec specification,
         CancellationToken cancellationToken) where Spec : ISingleResultSpecification, ISpecification<IRawAuditData>
         => SpecificationEvaluator.Default.GetQuery(this.context.Set<RawAudit>(), specification)
             .FirstOrDefaultAsync(cancellationToken);

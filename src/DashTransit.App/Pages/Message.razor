@@ -1,50 +1,56 @@
 @page "/message/{AuditId:int}"
+<DTPageTitle>Message</DTPageTitle>
 @using Newtonsoft.Json
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-@inject IDispatcher Dispatcher
-@inject IState<MessageState> State
-@using DashTransit.App.Components
-
+@inject IMediator Mediator
 
 @code {
-
     [Parameter]
     public int AuditId { get; set; }
 
+    private Task<IRawAuditData?> FetchMessage()
+        => this.Mediator.Send(new MessageByAuditId(Core.Domain.AuditId.From(AuditId)));
 }
 
-<Loader IsLoading=@State.Value.Loading>
-    @if (State.Value.Message is null)
+<FluentLoader Fetch=@FetchMessage Dependencies=@(new object[] { AuditId })>
+    @if (context is null)
     {
         <p>Message not found</p>
     }
     else
     {
-        <div class="container">
-            <div>
-                <h3>Message Properties</h3>
-                <dl>
-                    <DL T="Message Id" D=@(State.Value.Message!.MessageId)/>
-                    <DL T="Message Type" D=@(State.Value.Message!.MessageType)/>
-                    <DL T="Correlation Id" D=@(State.Value.Message!.CorrelationId)/>
-                    <DL T="Conversation Id" D=@(State.Value.Message!.ConversationId)/>
-                    <DL T="Sender" D=@(State.Value.Message!.SourceAddress)/>
-                </dl>
-            </div>
-            <pre>@JsonConvert.SerializeObject(State.Value.Message!.Message, Formatting.Indented)</pre>
-            <div>
-                <h3>Headers</h3>
-                <dl>
-                    @foreach (var header in State.Value.Message.Headers)
-                    {
-                        <DL T=@header.Key D=@header.Value/>
-                    }
-                </dl>
-            </div>
-        </div>
+        <TwoColumnLayout>
+            <Left>
+                <div Size="col-md-4">
+                    <h3>Message Properties</h3>
+                    <dl>
+                        <DL T="Message Id" D=@(context.MessageId) />
+                        <DL T="Message Type" D=@(context.MessageType) />
+                        <DL T="Correlation Id" D=@(context.CorrelationId) />
+                        <DL T="Conversation Id" D=@(context.ConversationId) />
+                        <DL T="Sender" D=@(context.SourceAddress) />
+                    </dl>
+                </div>
+            </Left>
+            <Right>
+                <AutoColumn>
+                    <Code>@JsonConvert.SerializeObject(context.Message, Formatting.Indented)</Code>
+                </AutoColumn>
+            </Right>
+        </TwoColumnLayout>
+        <h3>Headers</h3>
+        @if (!context.Headers.Any())
+        {
+            <p>Message has no headers</p>
+        }
+        <dl>
+            @foreach (var header in context.Headers)
+            {
+                <DL T=@header.Key D=@header.Value />
+            }
+        </dl>
         <div class="accordions">
-            <Actors MessageId="State.Value.Message!.MessageId"/>
-            <Conversation ConversationId="State.Value.Message!.ConversationId!.Value"/>
+            <Actors MessageId="context.MessageId" />
+            <Conversation ConversationId="context.ConversationId!.Value" />
         </div>
     }
-</Loader>
+</FluentLoader>

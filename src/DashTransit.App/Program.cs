@@ -1,6 +1,6 @@
 using DashTransit.Core;
 using DashTransit.EntityFramework;
-using Fluxor;
+using Havit.Blazor.Components.Web;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddFluxor(opt => opt.ScanAssemblies(typeof(Program).Assembly));
+builder.Services.AddHxServices();
+builder.Services.AddHxMessenger();
 
 builder.Services.AddDashTransit();
 builder.Services.UseDashTransitEntityFramework(

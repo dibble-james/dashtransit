@@ -29,7 +29,7 @@ public class FaultRepository : RepositoryBase<DomainFault>
     public override Task<TResult> GetBySpecAsync<TResult>(
         ISpecification<DomainFault, TResult> specification, CancellationToken cancellationToken = default)
         => SpecificationEvaluator.Default.GetQuery(this.context.Set<Fault>(), specification)
-            .FirstOrDefaultAsync(cancellationToken);
+            .FirstAsync(cancellationToken);
 
     public async override Task<List<DomainFault>> ListAsync(ISpecification<DomainFault> specification,
         CancellationToken cancellationToken = default)
@@ -54,11 +54,11 @@ public class FaultRepository : RepositoryBase<DomainFault>
         => SpecificationEvaluator.Default.GetQuery(this.context.Set<Fault>(), specification)
             .ToListAsync(cancellationToken);
 
-    public async override Task<DomainFault> GetByIdAsync<TId>(TId id,
+    public async override Task<DomainFault?> GetByIdAsync<TId>(TId id,
         CancellationToken cancellationToken)
         => await this.context.Set<Fault>().FindAsync(new object[] {id}, cancellationToken: cancellationToken);
 
-    public async override Task<DomainFault> GetBySpecAsync<Spec>(Spec specification,
+    public async override Task<DomainFault?> GetBySpecAsync<Spec>(Spec specification,
         CancellationToken cancellationToken)
     {
         var query = await SpecificationEvaluator.Default.GetQuery(this.context.Set<Fault>(), specification)

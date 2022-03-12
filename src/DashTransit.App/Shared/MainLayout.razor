@@ -1,16 +1,21 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 
 <PageTitle>DashTransit</PageTitle>
 
-<main>
-    <nav>
-        <h1>DashTransit</h1>
-        <FluentAnchor class="side-link" href="/" Appearance=@Appearance.Lightweight>Dashboard</FluentAnchor>
-        <FluentAnchor class="side-link" href="message" Appearance=@Appearance.Lightweight>Messages</FluentAnchor>
-        <FluentAnchor class="side-link" href="fault" Appearance=@Appearance.Lightweight>Faults</FluentAnchor>
-        <FluentAnchor class="side-link" href="endpoint" Appearance=@Appearance.Lightweight>Endpoints</FluentAnchor>
-    </nav>
-    <article>
+<HxMessenger Position="ToastContainerPosition.BottomStart" />
+<main class="d-md-flex min-vh-100">
+    <HxSidebar CssClass="sticky-top">
+        <HeaderTemplate>
+            <HxSidebarBrand BrandName="DashTransit" />
+        </HeaderTemplate>
+        <ItemsTemplate>
+            <HxSidebarItem Text="Dashboard" Href="/" Match="NavLinkMatch.All" Icon="BootstrapIcon.HouseFill" />
+            <HxSidebarItem Text="Messages" Href="message" Match="NavLinkMatch.Prefix" Icon="BootstrapIcon.EnvelopeFill" />
+            <HxSidebarItem Text="Faults" Href="fault" Match="NavLinkMatch.Prefix" Icon="BootstrapIcon.EnvelopeExclamationFill" />
+            <HxSidebarItem Text="Endpoints" Href="endpoint" Match="NavLinkMatch.Prefix" Icon="BootstrapIcon.HddNetworkFill" />
+        </ItemsTemplate>
+    </HxSidebar>
+    <article class="main p-4 flex-grow-1 overflow-hidden">
         @Body
     </article>
 </main>

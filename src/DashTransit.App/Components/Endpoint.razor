@@ -1,12 +1,14 @@
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-@inject IState<EndpointState> State
-@inject IDispatcher Dispatcher
+@inherits HookComponentBase
+@inject IMediator Mediator;
 
 @code {
     [Parameter, EditorRequired]
     public Core.Domain.EndpointId? EndpointId { get; set; }
+
+    private async Task<string> FetchEndpoint()
+    {
+        return (await Mediator.Send(new CalculateMessageRate(EndpointId))).ToString("0.00");
+    }
 }
 
-<FluentCard>
-    <StatCard Loading=@State.Value.IsLoading(this.EndpointId!) Title=@EndpointId!.Value.ToString() Rate="msg/sec" Stat=@State.Value.GetRate(EndpointId!).ToString("0.00") />
-</FluentCard>
+<StatCard Title=@EndpointId!.Value.ToString() Rate="msg/sec" Stat=@FetchEndpoint />

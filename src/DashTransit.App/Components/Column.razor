@@ -1,0 +1,9 @@
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public string Size { get; set; } = string.Empty;
+}
+
+<div class="col @Size">@ChildContent</div>

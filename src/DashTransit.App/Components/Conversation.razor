@@ -1,37 +1,37 @@
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-@inject IDispatcher Dispatcher
-@inject IState<ConversationState> State
+@inherits HookComponentBase
+@inject IMediator Mediator;
 
 @code {
     [Parameter, EditorRequired]
     public Guid ConversationId { get; set; }
-}
 
-<FluentAccordion>
-    <FluentAccordionItem @onclick=@LoadConversation>
-        <div slot="heading">Conversation</div>
-        <Loader IsLoading=@State.Value.Loading>
-            <FluentDataGrid ColumnDefinitions=Columns RowsData=@State.Value.Conversation GridTemplateColumns="9rem 1fr 6rem">
-                <RowItemTemplate>
-                    <FluentDataGridRow TItem=IRawAuditData>
-                        <FluentDataGridCell GridColumn=1>@context.SentTime</FluentDataGridCell>
-                        <FluentDataGridCell GridColumn=2>@context.MessageType</FluentDataGridCell>
-                        <FluentDataGridCell GridColumn=3>
-                            <FluentAnchor href=@($"message/{context.AuditRecordId}")>Details</FluentAnchor>
-                        </FluentDataGridCell>
-                    </FluentDataGridRow>
-                </RowItemTemplate>
-            </FluentDataGrid>
-        </Loader>
-    </FluentAccordionItem>
-</FluentAccordion>
-
-
-@code {
-    private readonly List<ColumnDefinition<IRawAuditData>> Columns = new List<ColumnDefinition<IRawAuditData>>
+    private async Task<GridDataProviderResult<IRawAuditData>> FetchConversation(GridDataProviderRequest<IRawAuditData> request)
     {
-        new ColumnDefinition<IRawAuditData>("Sent", x => x.SentTime.GetValueOrDefault()),
-        new ColumnDefinition<IRawAuditData>("Type", x => x.MessageType),
-        new ColumnDefinition<IRawAuditData>("", x => x),
-    };
+        var result = (await this.Mediator.Send(new ConversationById(ConversationId))).ToList();
+
+        return new GridDataProviderResult<IRawAuditData>
+            {
+                Data = result,
+                TotalCount = result.Count,
+            };
+    }
 }
+
+<HxAccordion>
+    <HxAccordionItem>
+        <HeaderTemplate>Conversation</HeaderTemplate>
+        <BodyTemplate>
+            <HxGrid DataProvider="FetchConversation" TItem=IRawAuditData>
+                <Columns>
+                    <HxGridColumn TItem=IRawAuditData HeaderText="Sent" ItemTextSelector=@(x => x.SentTime.GetValueOrDefault().ToString()) />
+                    <HxGridColumn TItem=IRawAuditData HeaderText="Type" ItemTextSelector=@(x => x.MessageType) />
+                    <HxGridColumn TItem=IRawAuditData>
+                        <ItemTemplate>
+                            <a href=@($"message/{context.AuditRecordId}")>Details</a>
+                        </ItemTemplate>
+                    </HxGridColumn>
+                </Columns>
+            </HxGrid>
+        </BodyTemplate>
+    </HxAccordionItem>
+</HxAccordion>
