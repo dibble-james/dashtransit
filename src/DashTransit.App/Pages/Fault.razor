@@ -1,4 +1,5 @@
 @page "/fault/{FaultId:int}"
+<DTPageTitle>Fault</DTPageTitle>
 @inherits HookComponentBase
 @using DashTransit.Core.Application.Commands
 @using Newtonsoft.Json
@@ -40,14 +41,18 @@
     {
         var (resending, setResending) = Hook.UseState(false);
 
-        <HxButton Color="ThemeColor.Primary"
-              Text="Resend"
-              disabled=@resending
-              @onclick=@Resend(setResending, AuditId.From(context.Message!.AuditRecordId), context.ProducedBy) />
+        <div class="d-flex">
+            <h3 class="flex-fill" style="word-break: break-all">@context.Exceptions.First().Message</h3>
+            <HxButton
+                  CssClass="align-self-start"
+                  Color="ThemeColor.Primary"
+                  Text="Resend"
+                  disabled=@resending
+                  @onclick=@Resend(setResending, AuditId.From(context.Message!.AuditRecordId), context.ProducedBy) />
+        </div>
         <TwoColumnLayout>
             <Left>
                 <div>
-                    <h3>@context.Exceptions.First().Message</h3>
                     <dl>
                         <DL T="Message Id">
                             <a Href=@($"/message/{context.Message!.AuditRecordId}")>@(context.MessageId)</a>
