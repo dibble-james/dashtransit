@@ -37,6 +37,10 @@
             </Right>
         </TwoColumnLayout>
         <h3>Headers</h3>
+        @if (!context.Headers.Any())
+        {
+            <p>Message has no headers</p>
+        }
         <dl>
             @foreach (var header in context.Headers)
             {

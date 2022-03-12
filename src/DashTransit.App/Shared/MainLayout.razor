@@ -5,13 +5,13 @@
 <main class="d-md-flex min-vh-100">
     <HxSidebar CssClass="sticky-top">
         <HeaderTemplate>
-            <HxSidebarBrand BrandName="DashTransit" BrandNameShort="DT" />
+            <HxSidebarBrand BrandName="DashTransit" />
         </HeaderTemplate>
         <ItemsTemplate>
-            <HxSidebarItem Text="Dashboard" Href="/" Match="NavLinkMatch.All" />
-            <HxSidebarItem Text="Messages" Href="message" Match="NavLinkMatch.All" />
-            <HxSidebarItem Text="Faults" Href="fault" Match="NavLinkMatch.All" />
-            <HxSidebarItem Text="Endpoints" Href="endpoint" Match="NavLinkMatch.All" />
+            <HxSidebarItem Text="Dashboard" Href="/" Match="NavLinkMatch.All" Icon="BootstrapIcon.HouseFill" />
+            <HxSidebarItem Text="Messages" Href="message" Match="NavLinkMatch.Prefix" Icon="BootstrapIcon.EnvelopeFill" />
+            <HxSidebarItem Text="Faults" Href="fault" Match="NavLinkMatch.Prefix" Icon="BootstrapIcon.EnvelopeExclamationFill" />
+            <HxSidebarItem Text="Endpoints" Href="endpoint" Match="NavLinkMatch.Prefix" Icon="BootstrapIcon.HddNetworkFill" />
         </ItemsTemplate>
     </HxSidebar>
     <article class="main p-4 flex-grow-1 overflow-hidden">

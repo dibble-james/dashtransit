@@ -14,7 +14,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Include="Shared\TwoColumnLayout.razor.css" />
+	  <Content Include="Shared\TwoColumnLayout.razor.css" />
 	</ItemGroup>
 
 	<ItemGroup>
