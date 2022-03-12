@@ -3,6 +3,7 @@
 @using DashTransit.Core.Application.Commands
 @using Newtonsoft.Json
 @inject IMediator Mediator
+@inject IHxMessengerService Messenger
 
 @code {
     [Parameter]
@@ -13,9 +14,20 @@
 
     public Action Resend(SetState<bool> setResending, AuditId auditId, EndpointId endpointId) => async () =>
     {
-        setResending(true);
-        await this.Mediator.Send(new ResendMessage(auditId, endpointId));
-        setResending(false);
+        try
+        {
+            setResending(true);
+            await this.Mediator.Send(new ResendMessage(auditId, endpointId));
+            this.Messenger.AddInformation("Resend", $"Message {auditId} Resent");
+        }
+        catch
+        {
+            this.Messenger.AddError("Resend", $"Couldn't resend message {auditId}");
+        }
+        finally
+        {
+            setResending(false);
+        }
     };
 }
 
