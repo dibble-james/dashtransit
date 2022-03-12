@@ -29,23 +29,27 @@
         var (resending, setResending) = Hook.UseState(false);
 
         <HxButton Color="ThemeColor.Primary"
-            Text="Resend"
+              Text="Resend"
               disabled=@resending
               @onclick=@Resend(setResending, AuditId.From(context.Message!.AuditRecordId), context.ProducedBy) />
-        <div class="container">
-            <div>
-                <h3>@context.Exceptions.First().Message</h3>
-                <dl>
-                    <DL T="Message Id">
-                        <a Href=@($"/message/{context.Message!.AuditRecordId}")>@(context.MessageId)</a>
-                    </DL>
-                    <DL T="Faulted" D=@(context.Produced) />
-                    <DL T="Endpoint" D=@(context.ProducedBy) />
-                    <DL T="Exception Type" D=@(context.Exceptions.First().ExceptionType) />
-                    <DL T="Source" D=@(context.Exceptions.First().Source) />
-                </dl>
-            </div>
-            <pre>@context.Exceptions.First().StackTrace</pre>
-        </div>
+        <TwoColumnLayout>
+            <Left>
+                <div>
+                    <h3>@context.Exceptions.First().Message</h3>
+                    <dl>
+                        <DL T="Message Id">
+                            <a Href=@($"/message/{context.Message!.AuditRecordId}")>@(context.MessageId)</a>
+                        </DL>
+                        <DL T="Faulted" D=@(context.Produced) />
+                        <DL T="Endpoint" D=@(context.ProducedBy) />
+                        <DL T="Exception Type" D=@(context.Exceptions.First().ExceptionType) />
+                        <DL T="Source" D=@(context.Exceptions.First().Source) />
+                    </dl>
+                </div>
+            </Left>
+            <Right>
+                <Code>@context.Exceptions.First().StackTrace</Code>
+            </Right>
+        </TwoColumnLayout>
     }
 </FluentLoader>

@@ -10,6 +10,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Shared\TwoColumnLayout.razor.css" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Include="Shared\TwoColumnLayout.razor.css" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="BlazorHooked" Version="0.3.2" />
 		<PackageReference Include="GraphShape" Version="1.2.1" />
 		<PackageReference Include="MassTransit.AspNetCore" Version="7.1.*" />

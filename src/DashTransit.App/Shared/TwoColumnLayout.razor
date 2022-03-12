@@ -1,0 +1,13 @@
+@code {
+    [Parameter, EditorRequired]
+    public RenderFragment? Left { get; set; }
+
+    
+    [Parameter, EditorRequired]
+    public RenderFragment? Right { get; set; }
+}
+
+<div class="container">
+    @Left
+    @Right
+</div>
