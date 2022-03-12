@@ -10,11 +10,11 @@
 }
 
 <HxCard>
-    <div class="widget">
-        <span class="title">@Title</span>
+    <HeaderTemplate>@Title</HeaderTemplate>
+    <BodyTemplate>
         <FluentLoader Fetch=@Stat>
-            <span class="stat">@context</span>
+            <HxCardText CssClass="display-1">@context</HxCardText>
         </FluentLoader>
-        <span class="rate">@Rate</span>
-    </div>
+    </BodyTemplate>
+    <FooterTemplate>@Rate</FooterTemplate>
 </HxCard>

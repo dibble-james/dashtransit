@@ -2,15 +2,19 @@
 
 <PageTitle>DashTransit</PageTitle>
 
-<main>
-    <nav>
-        <h1>DashTransit</h1>
-        <a class="side-link" href="/">Dashboard</a>
-        <a class="side-link" href="message">Messages</a>
-        <a class="side-link" href="fault">Faults</a>
-        <a class="side-link" href="endpoint">Endpoints</a>
-    </nav>
-    <article>
+<main class="d-md-flex min-vh-100">
+    <HxSidebar CssClass="sticky-top">
+        <HeaderTemplate>
+            <HxSidebarBrand BrandName="DashTransit" BrandNameShort="DT" />
+        </HeaderTemplate>
+        <ItemsTemplate>
+            <HxSidebarItem Text="Dashboard" Href="/" Match="NavLinkMatch.All" />
+            <HxSidebarItem Text="Messages" Href="message" Match="NavLinkMatch.All" />
+            <HxSidebarItem Text="Faults" Href="fault" Match="NavLinkMatch.All" />
+            <HxSidebarItem Text="Endpoints" Href="endpoint" Match="NavLinkMatch.All" />
+        </ItemsTemplate>
+    </HxSidebar>
+    <article class="main p-4 flex-grow-1 overflow-hidden">
         @Body
     </article>
 </main>
