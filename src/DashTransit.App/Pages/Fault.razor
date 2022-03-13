@@ -13,21 +13,16 @@
     public Task<Core.Domain.Fault?> FetchFault()
         => this.Mediator.Send(new FaultById(Core.Domain.FaultId.From(FaultId)));
 
-    public Action Resend(SetState<bool> setResending, AuditId auditId, EndpointId endpointId) => async () =>
+    public Action Resend(AuditId auditId, EndpointId endpointId) => async () =>
     {
         try
         {
-            setResending(true);
             await this.Mediator.Send(new ResendMessage(auditId, endpointId));
             this.Messenger.AddInformation("Resend", $"Message {auditId} Resent");
         }
         catch
         {
             this.Messenger.AddError("Resend", $"Couldn't resend message {auditId}");
-        }
-        finally
-        {
-            setResending(false);
         }
     };
 }
@@ -39,16 +34,13 @@
     }
     else
     {
-        var (resending, setResending) = Hook.UseState(false);
-
         <div class="d-flex">
             <h3 class="flex-fill" style="word-break: break-all">@context.Exceptions.First().Message</h3>
             <HxButton
                   CssClass="align-self-start"
                   Color="ThemeColor.Primary"
                   Text="Resend"
-                  disabled=@resending
-                  @onclick=@Resend(setResending, AuditId.From(context.Message!.AuditRecordId), context.ProducedBy) />
+                  OnValidClick=@Resend(AuditId.From(context.Message!.AuditRecordId), context.ProducedBy) />
         </div>
         <TwoColumnLayout>
             <Left>
