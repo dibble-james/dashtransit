@@ -12,16 +12,13 @@ using MassTransit;
 using MassTransit.Serialization;
 using Newtonsoft.Json;
 
-public record SendMessage(EndpointId To, string MessageType, string Message) : IRequest
+public record SendMessage(EndpointId To, string MessageType, IEnumerable<KeyValuePair<string?, string?>> Headers, string Message) : IRequest
 {
     public class Handler : IRequestHandler<SendMessage>
     {
         private readonly IBus bus;
 
-        public Handler(IBus bus)
-        {
-            this.bus = bus;
-        }
+        public Handler(IBus bus) => this.bus = bus;
 
         public async Task<Unit> Handle(SendMessage request, CancellationToken cancellationToken)
         {
@@ -29,7 +26,11 @@ public record SendMessage(EndpointId To, string MessageType, string Message) : I
 
             await (await this.bus.GetSendEndpoint(request.To.Value))
                 .Send(messageObj,
-                    context => context.Serializer = new SerialiserWrapper(request.MessageType, context.Serializer),
+                    context =>
+                    {
+                        request.Headers.Where(h => !string.IsNullOrEmpty(h.Key)).ToList().ForEach(h => context.Headers.Set(h.Key, h.Value));
+                        context.Serializer = new SerialiserWrapper(request.MessageType, context.Serializer);
+                    },
                     cancellationToken);
 
             return Unit.Value;
