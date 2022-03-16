@@ -2,6 +2,7 @@ using DashTransit.Core;
 using DashTransit.EntityFramework;
 using Havit.Blazor.Components.Web;
 using MassTransit;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,9 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddHxServices();
 builder.Services.AddHxMessenger();
+
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<DashTransitContext>();
 
 builder.Services.AddDashTransit();
 builder.Services.UseDashTransitEntityFramework(
@@ -52,6 +56,12 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
 }
+
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
+{
+    Predicate = (check) => check.Tags.Contains("ready"),
+});
+app.MapHealthChecks("/health/live", new HealthCheckOptions());
 
 app.UseStaticFiles();
 

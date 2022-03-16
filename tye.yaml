@@ -6,6 +6,12 @@ extensions:
 services:
 - name: dashtransit
   project: src/DashTransit.App/DashTransit.App.csproj
+  liveness:
+    http:
+      path: /health/live
+  readiness:
+    http:
+      path: /health/ready
   bindings:
   - protocol: http
     port: 5149
