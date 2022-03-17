@@ -1,8 +1,5 @@
 name: dashtransit
 network: dashtransit
-extensions:
-- name: seq
-  logPath: ./.volumes/seq
 services:
 - name: dashtransit
   project: src/DashTransit.App/DashTransit.App.csproj

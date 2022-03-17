@@ -34,9 +34,7 @@
     <HxInputText Label="Endpoint" @bind-Value="@state.Endpoint" />
     <HxInputText Label="Message Type" @bind-Value="@state.MessageType" />
     <p>Headers</p>
-    <HxGrid SelectedDataItem="selectedDataItem"
-            SelectedDataItemChanged=@(newItem => selectedDataItem = newItem)
-            TItem="HeaderItem"
+    <HxGrid TItem="HeaderItem"
             TableContainerCssClass="table-responsive"
             DataProvider="x => Task.FromResult(x.ApplyTo(headers))"
             ShowFooterWhenEmptyData=true
@@ -45,18 +43,7 @@
         <Columns>
             <HxGridColumn TItem="HeaderItem" HeaderText="Header">
                 <ItemTemplate Context="item">
-                    @if (selectedDataItem == item)
-                    {
                         <HxInputText @bind-Value="item.Header" />
-                    }
-                    else if (string.IsNullOrEmpty(item.Header))
-                    {
-                        <span>&nbsp</span>
-                    }
-                    else
-                    {
-                        @item.Header
-                    }
                 </ItemTemplate>
                 <FooterTemplate Context="x">
                     <HxButton Icon="BootstrapIcon.Plus" OnClick=AddHeader Color="ThemeColor.Secondary" />
@@ -64,18 +51,7 @@
             </HxGridColumn>
             <HxGridColumn TItem="HeaderItem" HeaderText="Content">
                 <ItemTemplate Context="item">
-                    @if (selectedDataItem == item)
-                    {
                         <HxInputText @bind-Value="item.Content" />
-                    }
-                    else if (string.IsNullOrEmpty(item.Content))
-                    {
-                        <span>&nbsp</span>
-                    }
-                    else
-                    {
-                        @item.Content
-                    }
                 </ItemTemplate>
             </HxGridColumn>
         </Columns>
@@ -93,7 +69,6 @@
 
     private SendState state = new SendState();
     private HxGrid<HeaderItem>? headersTable;
-    private HeaderItem? selectedDataItem;
 
     private Func<Task> Sender(List<HeaderItem> headers) => async () =>
     {

@@ -50,5 +50,5 @@ docker run --name dashtransit-migrations -e store__provider=<PROVIDER VARIABLE> 
 Just provide connection strings for the storage and transport. The web app is exposed on port 80.
 
 ```
-docker run -d -p 80:<desired port> --name dashtransit -e transport__connection= -e store__provider=<PROVIDER VARIABLE> -e store_connection= ghcr.io/dibble-james/dashtransit
+docker run -d -p <desired port>:80 --name dashtransit -e transport__connection= -e store__provider=<PROVIDER VARIABLE> -e store__connection= ghcr.io/dibble-james/dashtransit
 ```
