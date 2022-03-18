@@ -12,7 +12,7 @@ using MassTransit;
 using MassTransit.Serialization;
 using Newtonsoft.Json;
 
-public record SendMessage(EndpointId To, string MessageType, IEnumerable<KeyValuePair<string?, string?>> Headers, string Message) : IRequest
+public record SendMessage(EndpointId? To, string MessageType, IEnumerable<KeyValuePair<string?, string?>> Headers, string Message) : IRequest
 {
     public class Handler : IRequestHandler<SendMessage>
     {
@@ -24,14 +24,22 @@ public record SendMessage(EndpointId To, string MessageType, IEnumerable<KeyValu
         {
             var messageObj = JsonConvert.DeserializeObject(request.Message);
 
-            await (await this.bus.GetSendEndpoint(request.To.Value))
-                .Send(messageObj,
-                    context =>
-                    {
-                        request.Headers.Where(h => !string.IsNullOrEmpty(h.Key)).ToList().ForEach(h => context.Headers.Set(h.Key, h.Value));
-                        context.Serializer = new SerialiserWrapper(request.MessageType, context.Serializer);
-                    },
-                    cancellationToken);
+            void AddHeaders(SendContext context)
+            {
+                request.Headers.Where(h => !string.IsNullOrEmpty(h.Key)).ToList().ForEach(h => context.Headers.Set(h.Key, h.Value));
+                context.Serializer = new SerialiserWrapper(request.MessageType, context.Serializer);
+            }
+
+            if (request.To is not null)
+            {
+                var endpoint = await this.bus.GetSendEndpoint(request.To.Value);
+
+                await endpoint.Send(messageObj, AddHeaders, cancellationToken);
+            }
+            else
+            {
+                await this.bus.Publish(messageObj, AddHeaders, cancellationToken);
+            }
 
             return Unit.Value;
         }

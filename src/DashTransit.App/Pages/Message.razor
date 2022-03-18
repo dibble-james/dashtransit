@@ -1,4 +1,5 @@
 @page "/message/{AuditId:int}"
+@inherits HookComponentBase
 <DTPageTitle>Message</DTPageTitle>
 @using Newtonsoft.Json
 @inject IMediator Mediator
@@ -18,39 +19,66 @@
     }
     else
     {
-        <TwoColumnLayout>
-            <Left>
-                <div Size="col-md-4">
-                    <h3>Message Properties</h3>
-                    <dl>
-                        <DL T="Message Id" D=@(context.MessageId) />
-                        <DL T="Message Type" D=@(context.MessageType) />
-                        <DL T="Correlation Id" D=@(context.CorrelationId) />
-                        <DL T="Conversation Id" D=@(context.ConversationId) />
-                        <DL T="Sender" D=@(context.SourceAddress) />
-                    </dl>
-                </div>
-            </Left>
-            <Right>
-                <AutoColumn>
-                    <Code>@JsonConvert.SerializeObject(context.Message, Formatting.Indented)</Code>
-                </AutoColumn>
-            </Right>
-        </TwoColumnLayout>
-        <h3>Headers</h3>
-        @if (!context.Headers.Any())
-        {
-            <p>Message has no headers</p>
-        }
-        <dl>
-            @foreach (var header in context.Headers)
-            {
-                <DL T=@header.Key D=@header.Value />
-            }
-        </dl>
-        <div class="accordions">
-            <Actors MessageId="context.MessageId" />
-            <Conversation ConversationId="context.ConversationId!.Value" />
+        var (editing, setEditing) = Hook.UseState(false);
+
+        <div class="d-flex">
+            <HxButton CssClass="align-self-start"
+                  Color="ThemeColor.Primary"
+                  Text=@(editing ? "Cancel" : "Edit & Resend")
+                  OnClick=@(() => setEditing(!editing)) />
         </div>
+
+        @if (editing)
+        {
+            var headers = new List<MessageEditor.HeaderItem>(context.Headers.Select(x => new MessageEditor.HeaderItem
+                        {
+                            Header = x.Key,
+                            Content = x.Value,
+                        }))
+            {
+                new MessageEditor.HeaderItem { Header = MassTransit.MessageHeaders.MessageId, Content = context.MessageId?.ToString() },
+                new MessageEditor.HeaderItem { Header = MassTransit.MessageHeaders.CorrelationId, Content = context.CorrelationId?.ToString() },
+                new MessageEditor.HeaderItem { Header = MassTransit.MessageHeaders.ConversationId, Content = context.ConversationId?.ToString() },
+            };
+
+            <MessageEditor Message=@(new MessageEditor.MessageViewModel {
+                MessageType = context.MessageType,
+                Message = JsonConvert.SerializeObject(context.Message, Formatting.Indented),
+                Headers = headers,
+            }) />
+        }
+        else
+        {
+            <TwoColumnLayout>
+                <Left>
+                    <div>
+                        <h3>Message Properties</h3>
+                        <dl>
+                            <DL T="Sender" D=@(context.SourceAddress) />
+                            <DL T="Message Type" D=@(context.MessageType) />
+                        </dl>
+                    </div>
+                </Left>
+                <Right>
+                    <AutoColumn>
+                        <h3>Headers</h3>
+                        <dl>
+                            <DL T="Message Id" D=@(context.MessageId) />
+                            <DL T="Correlation Id" D=@(context.CorrelationId) />
+                            <DL T="Conversation Id" D=@(context.ConversationId) />
+                            @foreach (var header in context.Headers)
+                            {
+                                <DL T=@header.Key D=@header.Value />
+                            }
+                        </dl>
+                    </AutoColumn>
+                </Right>
+            </TwoColumnLayout>
+            <Code>@JsonConvert.SerializeObject(context.Message, Formatting.Indented)</Code>
+            <div class="accordions">
+                <Actors MessageId="context.MessageId" />
+                <Conversation ConversationId="context.ConversationId!.Value" />
+            </div>
+        }
     }
 </FluentLoader>
