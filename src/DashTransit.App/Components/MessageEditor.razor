@@ -102,6 +102,12 @@
             </AutoColumn>
         </Right>
     </TwoColumnLayout>
-    <HxInputTextArea Label="Message" @bind-Value="@Message.Message" rows=@(System.Text.RegularExpressions.Regex.Matches(Message.Message, System.Environment.NewLine).Count + 1) />
+    @{
+        var rows = Message.Message is null
+        ? 10
+        : System.Text.RegularExpressions.Regex.Matches(Message.Message, System.Environment.NewLine).Count + 1;
+    }
+
+    <HxInputTextArea Label="Message" @bind-Value="@Message.Message" rows=@(rows) />
     <HxSubmit Color="ThemeColor.Primary">Send</HxSubmit>
 </EditForm>
