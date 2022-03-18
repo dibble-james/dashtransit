@@ -15,7 +15,17 @@
             <HxSidebarItem Text="Endpoints" Href="endpoint" Match="NavLinkMatch.Prefix" Icon="BootstrapIcon.HddNetworkFill" />
         </ItemsTemplate>
     </HxSidebar>
-    <article class="main p-4 flex-grow-1 overflow-hidden">
-        @Body
-    </article>
+    <div class="flex-grow-1 overflow-hidden">
+        <HxNavbar ColorScheme="NavbarColorScheme.Dark" Color="ThemeColor.None">
+            <HxNavbarToggler />
+            <HxNavbarCollapse>
+                <div class="d-flex justify-content-end w-100">
+                    <a href="message/send" class="btn btn-secondary">Manual Send</a>
+                </div>
+            </HxNavbarCollapse>
+        </HxNavbar>
+        <article class="main m-3">
+            @Body
+        </article>
+    </div>
 </main>

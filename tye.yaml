@@ -1,11 +1,14 @@
 name: dashtransit
 network: dashtransit
-extensions:
-- name: seq
-  logPath: ./.volumes/seq
 services:
 - name: dashtransit
   project: src/DashTransit.App/DashTransit.App.csproj
+  liveness:
+    http:
+      path: /health/live
+  readiness:
+    http:
+      path: /health/ready
   bindings:
   - protocol: http
     port: 5149
