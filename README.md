@@ -4,24 +4,24 @@ Gain an insight into your MassTransit installation
 
 [![CI Build](https://github.com/dibble-james/dashtransit/actions/workflows/ci.yml/badge.svg?branch=trunk)](https://github.com/dibble-james/dashtransit/actions/workflows/ci.yml)
 
-![Dashboard](https://user-images.githubusercontent.com/11923585/159138108-cdff0fa5-6cc7-427f-bd2c-a23e17b1e816.png)
-![Message](https://user-images.githubusercontent.com/11923585/159138157-5a9ab55d-342a-479c-98d8-cbc3f0f368fc.png)
-![Editor](https://user-images.githubusercontent.com/11923585/159138195-8e2b442b-afe8-4c84-969f-67883595680f.png)
-![Fault](https://user-images.githubusercontent.com/11923585/149025825-11539fe3-1a9b-45ad-ac0c-d5478e12d3e9.png)
 
 ## Features
 
-- View your audit logs
-- See related messages
-- See the endpoints associated with a message
-- Analyse faults
-- Re-send failed messages
+- [x] View your audit logs
+- [x] See related messages
+- [x] See the endpoints associated with a message
+- [x] Analyse faults
+- [x] Re-send failed messages
+- [x] Send new message
+- [x] Edit and re-send
+
+![Screenshots](https://user-images.githubusercontent.com/11923585/159138708-607e4984-ba1f-4b7b-b87f-beef90292fe0.png)
 
 ### Coming soon...
 
-- Search audit logs
-- Send new message
-- Edit and re-send
+- [ ] Search audit logs
+- [ ] Improved endpoint details
+- [ ] Azure Service Bus
 
 ## Supported Configurations
 
@@ -51,3 +51,5 @@ Just provide connection strings for the storage and transport. The web app is ex
 ```
 docker run -d -p <desired port>:80 --name dashtransit -e transport__connection= -e store__provider=<PROVIDER VARIABLE> -e store__connection= ghcr.io/dibble-james/dashtransit
 ```
+
+Then enable [Message Audit](https://masstransit-project.com/advanced/audit.html) on all your endpoints and DashTransit will start to consume any faults raised and will now have access to the audit logs created by MassTransit.
