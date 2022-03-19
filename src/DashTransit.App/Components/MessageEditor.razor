@@ -1,0 +1,113 @@
+@using System.Linq.Expressions
+@using DashTransit.Core.Application.Commands
+@using System.ComponentModel.DataAnnotations
+@inject IMediator Mediator
+@inject IHxMessengerService Messenger
+
+@code {
+    [Parameter]
+    public MessageViewModel Message { get; set; } = new MessageViewModel();
+    private HxGrid<HeaderItem>? headersTable;
+
+    private async Task Sender()
+    {
+        try
+        {
+            await this.Mediator.Send(
+                new SendMessage(
+                    string.IsNullOrEmpty(Message.Endpoint) ? null : EndpointId.From(new Uri(Message.Endpoint)),
+                    Message.MessageType,
+                    Message.Headers.Select(x => KeyValuePair.Create(x.Header, x.Content)),
+                    Message.Message));
+            this.Messenger.AddInformation("Send", $"Message Sent");
+        }
+        catch (Exception ex)
+        {
+            this.Messenger.AddError("Send", $"Couldn't send message {ex}");
+        }
+    }
+
+    private async Task AddHeader()
+    {
+        this.Message.Headers.Add(new HeaderItem());
+        await this.headersTable!.RefreshDataAsync();
+    }
+
+    private Func<Task> RemoveHeader(HeaderItem item) => async () =>
+    {
+        this.Message.Headers.Remove(item);
+        await this.headersTable!.RefreshDataAsync();
+    };
+
+    public class MessageViewModel
+    {
+        public string? Endpoint { get; set; }
+
+        [Required]
+        public string MessageType { get; set; } = null!;
+
+        [Required]
+        public string Message { get; set; } = null!;
+
+        public List<HeaderItem> Headers { get; set; } = new List<HeaderItem>();
+    }
+
+    public record HeaderItem
+    {
+        public string? Header { get; set; }
+        public string? Content { get; set; }
+    }
+}
+
+<EditForm Model="Message" OnValidSubmit="Sender">
+    <DataAnnotationsValidator />
+    <TwoColumnLayout>
+        <Left>
+            <div>
+                <h3>Message Properties</h3>
+                <HxInputText Label="Recipient" @bind-Value="@Message.Endpoint" Hint="Leave blank to publish to all subscribers of the Message Type" />
+                <HxInputText Label="Message Type" @bind-Value="@Message.MessageType" />
+            </div>
+        </Left>
+        <Right>
+            <AutoColumn>
+                <h3>Headers</h3>
+                <HxGrid TItem="HeaderItem"
+                        TableContainerCssClass="table-responsive"
+                        DataProvider="x => Task.FromResult(x.ApplyTo(Message.Headers))"
+                        ShowFooterWhenEmptyData=true
+                        PlaceholdersRowCount=0
+                        @ref="headersTable">
+                    <Columns>
+                        <HxGridColumn TItem="HeaderItem" HeaderText="Header">
+                            <ItemTemplate Context="item">
+                                <HxInputText @bind-Value="item.Header" />
+                            </ItemTemplate>
+                            <FooterTemplate Context="x">
+                                <HxButton Icon="BootstrapIcon.Plus" OnClick=@AddHeader Color="ThemeColor.Secondary" />
+                            </FooterTemplate>
+                        </HxGridColumn>
+                        <HxGridColumn TItem="HeaderItem" HeaderText="Content">
+                            <ItemTemplate Context="item">
+                                <HxInputText @bind-Value="item.Content" />
+                            </ItemTemplate>
+                        </HxGridColumn>
+                    </Columns>
+                    <ContextMenu Context="item">
+                        <HxContextMenu>
+                            <HxContextMenuItem Text="Remove" OnClick=@RemoveHeader(item) />
+                        </HxContextMenu>
+                    </ContextMenu>
+                </HxGrid>
+            </AutoColumn>
+        </Right>
+    </TwoColumnLayout>
+    @{
+        var rows = Message.Message is null
+        ? 10
+        : System.Text.RegularExpressions.Regex.Matches(Message.Message, System.Environment.NewLine).Count + 1;
+    }
+
+    <HxInputTextArea Label="Message" @bind-Value="@Message.Message" rows=@(rows) />
+    <HxSubmit Color="ThemeColor.Primary">Send</HxSubmit>
+</EditForm>

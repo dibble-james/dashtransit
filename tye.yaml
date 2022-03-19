@@ -4,6 +4,7 @@ services:
 - name: dashtransit
   project: src/DashTransit.App/DashTransit.App.csproj
   liveness:
+    failureThreshold: 30
     http:
       path: /health/live
   readiness:
